@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Jogos Copa do Mundo 2022</string>
+    <string name="desc_float_button">Botão de simulação de partidas</string>
+    <string name="cd_img_mandante">imagem do time mandante</string>
+    <string name="cd_img_visitante">imagem time visitante</string>
+    <string name="nome_time_visitante">texto</string>
+    <string name="placar_time_visitante"></string>
+    <string name="txt_versus">X</string>
+    <string name="tv_away_team_score"></string>
+    <string name="error_api">unexpected error</string>
 </resources>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_navigation"
+    app:startDestination="@id/jogosFragment">
+
+    <fragment
+        android:id="@+id/jogosFragment"
+        android:name="com.example.jogoscopadomundo2022.ui.uijogos.fragments.JogosFragment"
+        android:label="JogosFragment"
+        tools:layout="@layout/fragment_jogos">
+        <action
+            android:id="@+id/action_jogosFragment_to_detalhesJogoFragment"
+            app:destination="@id/detalhesJogoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/detalhesJogoFragment"
+        android:name="com.example.jogoscopadomundo2022.ui.uijogos.fragments.DetalhesJogoFragment"
+        android:label="DetalhesJogoFragment"
+        tools:layout="@layout/fragment_detalhes_jogo">
+        <argument
+            android:name="partida"
+            app:argType="com.example.jogoscopadomundo2022.domain.apijogos.Partida" />
+        <action
+            android:id="@+id/action_detalhesJogoFragment_to_jogosFragment"
+            app:destination="@id/jogosFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/tabelasFragment"
+        android:name="com.example.jogoscopadomundo2022.ui.uitabelas.fragments.TabelasFragment"
+        android:label="TabelasFragment"
+        tools:layout="@layout/fragment_tabelas"/>
+
+</navigation>
