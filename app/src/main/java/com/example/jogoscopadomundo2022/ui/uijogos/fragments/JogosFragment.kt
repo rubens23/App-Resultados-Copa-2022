@@ -100,7 +100,8 @@ class JogosFragment: Fragment() {
         }
 
          */
-        mostrarPartidasDoDia = true
+
+        //mostrarPartidasDoDia = true
         createSpinnerList()
         setupHttpClient()
         setupMatchesList()
@@ -189,7 +190,7 @@ class JogosFragment: Fragment() {
 
     private fun setJogosSpinnerClickListener() {
         binding.tvSpinner.setOnItemClickListener { _, _, pos, _ ->
-            if(pos == 0 && !mostrarPartidasDoDia){
+            if(pos == 0){
                 hideSpinnerGrupos()
                 findTodayMatchesFromApi()
                 mostrarPartidasDoDia = true
@@ -357,34 +358,47 @@ class JogosFragment: Fragment() {
     }
 
     private fun dealWithDataUpdateOnRefresh() {
-        Log.d("entendendo2", "to no dealWithDataUpdateOnRefresh")
+        Log.d("entendendo3", "mostrarTodasPartidas: ${mostrarTodasPartidas}")
+        Log.d("entendendo3", "mostrarPartidasDoDia: ${mostrarPartidasDoDia}")
+        Log.d("entendendo3", "mostrarPartidasPrimeiraRodada: ${mostrarPartidasPrimeiraRodada}")
+        Log.d("entendendo3", "mostrarPartidasSegundaRodada: ${mostrarPartidasSegundaRodada}")
+        Log.d("entendendo3", "mostrarPartidasTerceiraRodada: ${mostrarPartidasTerceiraRodada}")
         if(mostrarTodasPartidas){
             findMatchesFromApi()
+            Log.d("entendendo3", "to no refresh mostrando todas as partidas")
         }
         if (mostrarPartidasDoDia){
             findTodayMatchesFromApi()
+            Log.d("entendendo3", "to no refresh mostrando todas as partidas do dia")
         }
         if (mostrarPartidasPrimeiraRodada){
+            Log.d("entendendo3", "to no refresh mostrando todas as partidas da primeira rodada")
             if(binding.tvSpinnerGrupos.text.toString() == ""){
                 findPartidasDaPrimeiraRodada("Todos os Grupos")
+                Log.d("entendendo3", "to no refresh mostrando todas as partidas da primeira rodada")
             }else{
                 findPartidasDaPrimeiraRodada(binding.tvSpinnerGrupos.text.toString())
+                Log.d("entendendo3", "to no refresh mostrando todas as partidas da primeira rodada de algum grupo")
             }
 
         }
         if (mostrarPartidasSegundaRodada){
+            Log.d("entendendo3", "to no refresh mostrando todas as partidas da segunda rodada")
             if(binding.tvSpinnerGrupos.text.toString() == ""){
                 findPartidasDaSegundaRodada("Todos os Grupos")
             }else{
                 findPartidasDaSegundaRodada(binding.tvSpinnerGrupos.text.toString())
+                Log.d("entendendo3", "to no refresh mostrando todas as partidas da segunda rodada de algum grupo")
 
             }
         }
         if (mostrarPartidasTerceiraRodada){
+            Log.d("entendendo3", "to no refresh mostrando todas as partidas da terceira rodada")
             if(binding.tvSpinnerGrupos.text.toString() == ""){
                 findPartidasDaTerceiraRodada("Todos os Grupos")
             }else{
                 findPartidasDaTerceiraRodada(binding.tvSpinnerGrupos.text.toString())
+                Log.d("entendendo3", "to no refresh mostrando todas as partidas da terceira rodada de algum grupo")
 
             }
         }
@@ -396,6 +410,12 @@ class JogosFragment: Fragment() {
         binding.rvMatches.adapter = adapter
 
     }
+
+
+
+
+
+
 
     fun findTodayMatchesFromApi(){
         binding.srlMatches.isRefreshing = true
@@ -542,11 +562,18 @@ class JogosFragment: Fragment() {
         createSpinnerGruposList()
         binding!!.tvSpinner.setSelection(0)
         Log.d("ciclodevida", "to no onresume")
+        dealWithSpinnerAfterReturningFromAnotherFragment()
         //read key value in datastore
-        if(binding.tvSpinner.text.toString() != null){
+
+
+    }
+
+    private fun dealWithSpinnerAfterReturningFromAnotherFragment() {
+        if(binding.tvSpinner.text.toString() != ""){
             if (binding.tvSpinner.text.toString() == "Jogos de Hoje"){
-              findTodayMatchesFromApi()
+                findTodayMatchesFromApi()
                 Log.d("entendendo", "to no jogos de hoje")
+
             }
             if (binding.tvSpinner.text.toString() == "1ª Rodada"){
                 Log.d("entendendo", "to no jogos primeira rodada")
@@ -582,6 +609,9 @@ class JogosFragment: Fragment() {
                 }
             }
 
+        }else{
+            //significa que ele esta vazio, se ele esta vazio, ele tem que mostrar os jogos do dia
+            findTodayMatchesFromApi()
         }
 
     }

@@ -19,12 +19,12 @@
         android:name="com.example.jogoscopadomundo2022.ui.uijogos.fragments.DetalhesJogoFragment"
         android:label="DetalhesJogoFragment"
         tools:layout="@layout/fragment_detalhes_jogo">
-        <argument
-            android:name="partida"
-            app:argType="com.example.jogoscopadomundo2022.domain.apijogos.Partida" />
         <action
             android:id="@+id/action_detalhesJogoFragment_to_jogosFragment"
             app:destination="@id/jogosFragment" />
+        <argument
+            android:name="partida"
+            app:argType="com.example.jogoscopadomundo2022.domain.apijogos.Partida" />
     </fragment>
 
     <fragment

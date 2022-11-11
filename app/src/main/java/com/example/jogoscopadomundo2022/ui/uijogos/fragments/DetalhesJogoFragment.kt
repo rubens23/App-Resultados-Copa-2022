@@ -59,7 +59,6 @@ class DetalhesJogoFragment: Fragment() {
         //no observer vai ter que ter um algoritmo para filtrar só a partida que é do meu
         //interesse
         viewModel.partidas.observe(viewLifecycleOwner){
-            Toast.makeText(requireContext(), "recebi dados", Toast.LENGTH_SHORT).show()
             it.forEach {
                 if(it.mandante.nome == partida?.mandante?.nome
                     && it.visitante.nome == partida?.visitante?.nome

@@ -11,7 +11,7 @@ import com.bumptech.glide.Glide
 import com.example.jogoscopadomundo2022.databinding.MatchItemBinding
 import com.example.jogoscopadomundo2022.domain.apijogos.Partida
 import com.example.jogoscopadomundo2022.ui.uijogos.fragments.JogosFragment
-
+import com.example.jogoscopadomundo2022.ui.uijogos.fragments.JogosFragmentDirections
 
 
 class PartidasAdapter(private val matchesList: List<Partida>): RecyclerView.Adapter<PartidasAdapter.ViewHolder>() {
@@ -62,6 +62,10 @@ class PartidasAdapter(private val matchesList: List<Partida>): RecyclerView.Adap
 //                val intent = Intent(binding.root.context, ActivityDetail::class.java)
 //                intent.putExtra(ActivityDetail.Extras.MATCH, partida)
 //                binding.root.context.startActivity(intent)
+
+                val action = JogosFragmentDirections.actionJogosFragmentToDetalhesJogoFragment(partida)
+
+                binding.root.findNavController().navigate(action)
 
 
 
