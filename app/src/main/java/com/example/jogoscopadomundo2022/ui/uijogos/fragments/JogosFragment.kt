@@ -52,7 +52,8 @@ class JogosFragment: Fragment() {
     private lateinit var listaSpinnerJogos: Array<String>
 
 
-    private val Context._dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
+    //recycler view in landscape mode
+    //https://stackoverflow.com/questions/59443286/android-i-wanna-to-make-recyclerview-in-landscape-mode-and-all-the-app-in-prtra
 
 
 
@@ -273,6 +274,7 @@ class JogosFragment: Fragment() {
 
     private fun setSpinnerGruposClickListener() {
         binding?.tvSpinnerGrupos?.setOnItemClickListener { adapterView, view, pos, id ->
+            dealWithSpinnerAfterReturningFromAnotherFragment()
             if (mostrarPartidasPrimeiraRodada){
                 clearRecycleView()
                 when(binding?.tvSpinnerGrupos?.text.toString()){
@@ -364,6 +366,7 @@ class JogosFragment: Fragment() {
         Log.d("entendendo3", "mostrarPartidasPrimeiraRodada: ${mostrarPartidasPrimeiraRodada}")
         Log.d("entendendo3", "mostrarPartidasSegundaRodada: ${mostrarPartidasSegundaRodada}")
         Log.d("entendendo3", "mostrarPartidasTerceiraRodada: ${mostrarPartidasTerceiraRodada}")
+        /*
         if(!mostrarTodasPartidas
             && !mostrarPartidasDoDia
             && !mostrarPartidasPrimeiraRodada
@@ -371,6 +374,9 @@ class JogosFragment: Fragment() {
             && !mostrarPartidasTerceiraRodada){
             findTodayMatchesFromApi()
         }
+
+         */
+        dealWithSpinnerAfterReturningFromAnotherFragment()
         if(mostrarTodasPartidas){
             findMatchesFromApi()
             Log.d("entendendo3", "to no refresh mostrando todas as partidas")
@@ -638,6 +644,7 @@ class JogosFragment: Fragment() {
                     Log.d("entendendo", "to no jogos da primeira rodada de algum grupo")
                 }else{
                     findPartidasDaPrimeiraRodada("Todos os Grupos")
+                    showSpinnerGrupos()
                     Log.d("entendendo", "to no jogos da primeira rodada de todos os grupos")
                 }
             }
@@ -649,6 +656,7 @@ class JogosFragment: Fragment() {
                     Log.d("entendendo", "to no jogos da primeira rodada de algum grupo")
                 }else{
                     findPartidasDaSegundaRodada("Todos os Grupos")
+                    showSpinnerGrupos()
                     Log.d("entendendo", "to no jogos da segunda rodada de todos os grupos")
                 }
             }
@@ -660,6 +668,7 @@ class JogosFragment: Fragment() {
                     Log.d("entendendo", "to no jogos da primeira rodada de algum grupo")
                 }else{
                     findPartidasDaTerceiraRodada("Todos os Grupos")
+                    showSpinnerGrupos()
                     Log.d("entendendo", "to no jogos da terceira rodada de todos os grupos")
                 }
             }
