@@ -150,8 +150,20 @@ class TabelasFragment: Fragment() {
         super.onResume()
         updateDataAccordingToSpinnerSelectedText()
         createSpinnerList()
+        Log.d("ciclofragmenttab", "to no on resume do fragment tabelas")
 
 
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        Log.d("ciclofragmenttab", "to no on stop do fragment tabelas")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("ciclofragmenttab", "to no on destroy do fragment tabelas")
     }
 
     private fun setupTabelasRefresh() {

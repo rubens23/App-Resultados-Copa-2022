@@ -1,6 +1,7 @@
 package com.example.jogoscopadomundo2022.ui.uijogos.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.example.jogoscopadomundo2022.R
 import com.example.jogoscopadomundo2022.databinding.FragmentDetalhesJogoBinding
 import com.example.jogoscopadomundo2022.domain.apijogos.AutorGolMandante
 import com.example.jogoscopadomundo2022.domain.apijogos.AutorGolVisitante
@@ -17,6 +19,7 @@ import com.example.jogoscopadomundo2022.domain.apijogos.Partida
 import com.example.jogoscopadomundo2022.ui.uijogos.adapters.GolsMandanteAdapter
 import com.example.jogoscopadomundo2022.ui.uijogos.adapters.GolsVisitanteAdapter
 import com.example.jogoscopadomundo2022.ui.uijogos.viewmodels.ActivityDetailViewModel
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class DetalhesJogoFragment: Fragment() {
 
@@ -54,6 +57,7 @@ class DetalhesJogoFragment: Fragment() {
         
     }
 
+
     private fun initViewModel() {
         viewModel = ViewModelProvider(this)[ActivityDetailViewModel::class.java]
         //no observer vai ter que ter um algoritmo para filtrar só a partida que é do meu
@@ -90,6 +94,30 @@ class DetalhesJogoFragment: Fragment() {
     override fun onResume() {
         super.onResume()
         viewModel.findMatchesFromApi()
+        setBottomNavigationHighlightInJogosOption()
+
+
+
+
+        Log.d("ciclofragmentdet", "to no on resume do fragment detalhes")
+    }
+
+    private fun setBottomNavigationHighlightInJogosOption() {
+        val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        if(bottomNav != null){
+            val item = bottomNav.menu.findItem(R.id.jogosFragment)
+            item.isChecked = true
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d("ciclofragment", "to no on stop do fragment detalhes")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("ciclofragment", "to no on destroy do fragment detalhes")
     }
 
     private fun atualizarListaGolsMandante(p: Partida) {

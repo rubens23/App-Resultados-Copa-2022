@@ -454,6 +454,18 @@ class JogosFragment: Fragment() {
 
     }
 
+    override fun onStop() {
+        super.onStop()
+        Log.d("ciclofragment", "to no on stop do fragment jogos")
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("ciclofragment", "to no on destroy do fragment jogos")
+
+    }
+
     private fun findPartidasDaPrimeiraRodada(grupo: String) {
         binding!!.srlMatches.isRefreshing = true
         matchesApi!!.getMatches().enqueue(object: Callback<List<Partida>> {
