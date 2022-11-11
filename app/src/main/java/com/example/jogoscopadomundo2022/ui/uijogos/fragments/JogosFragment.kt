@@ -29,6 +29,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.properties.Delegates
 
@@ -363,6 +364,13 @@ class JogosFragment: Fragment() {
         Log.d("entendendo3", "mostrarPartidasPrimeiraRodada: ${mostrarPartidasPrimeiraRodada}")
         Log.d("entendendo3", "mostrarPartidasSegundaRodada: ${mostrarPartidasSegundaRodada}")
         Log.d("entendendo3", "mostrarPartidasTerceiraRodada: ${mostrarPartidasTerceiraRodada}")
+        if(!mostrarTodasPartidas
+            && !mostrarPartidasDoDia
+            && !mostrarPartidasPrimeiraRodada
+            && !mostrarPartidasSegundaRodada
+            && !mostrarPartidasTerceiraRodada){
+            findTodayMatchesFromApi()
+        }
         if(mostrarTodasPartidas){
             findMatchesFromApi()
             Log.d("entendendo3", "to no refresh mostrando todas as partidas")
@@ -418,6 +426,7 @@ class JogosFragment: Fragment() {
 
 
     fun findTodayMatchesFromApi(){
+        turnOffNoMatchesTextView()
         binding.srlMatches.isRefreshing = true
         matchesApi!!.getMatches().enqueue(object: Callback<List<Partida>> {
             override fun onResponse(call: Call<List<Partida>>, response: Response<List<Partida>>) {
@@ -425,7 +434,8 @@ class JogosFragment: Fragment() {
                 if (response.isSuccessful()) {
                     val listaPartidas: MutableList<Partida> = mutableListOf()
                     response.body()?.forEach { partida->
-                        if (partida.estadio.data_jogo == "20/11/2022"){
+                        val diaAtual = getCurrentDateToGetTodayMatches()
+                        if (partida.estadio.data_jogo == diaAtual){
                             listaPartidas.add(partida)
 
                         }
@@ -434,9 +444,20 @@ class JogosFragment: Fragment() {
 
 
 
-                    adapter = PartidasAdapter(listaPartidas)
-                    binding.rvMatches.layoutManager = LinearLayoutManager(requireContext())
-                    binding.rvMatches.adapter = adapter
+                    if(listaPartidas.isNotEmpty()){
+                        Log.d("testejogoshj", "lista de jogos de hoje nao esta vazia")
+                        adapter = PartidasAdapter(listaPartidas)
+                        binding.rvMatches.layoutManager = LinearLayoutManager(requireContext())
+                        binding.rvMatches.adapter = adapter
+                    }else{
+                        //lista é vazia e mensagem tem que aparecer
+                        turnOnNoMatchesTextView()
+                        adapter = PartidasAdapter(listaPartidas)
+                        binding.rvMatches.layoutManager = LinearLayoutManager(requireContext())
+                        binding.rvMatches.adapter = adapter
+                        Log.d("testejogoshj", "lista de jogos de hoje esta vazia")
+                    }
+
                 } else {
                     showErrorMessage()
                 }
@@ -454,6 +475,25 @@ class JogosFragment: Fragment() {
 
     }
 
+    private fun turnOnNoMatchesTextView(){
+        binding.tvNaoTemJogo.visibility = View.VISIBLE
+    }
+
+    private fun turnOffNoMatchesTextView(){
+        binding.tvNaoTemJogo.visibility = View.GONE
+    }
+
+
+
+    private fun getCurrentDateToGetTodayMatches(): String {
+        val formatarData = SimpleDateFormat("dd-MM-yyyy")
+        val data = Date()
+        val dataFormatada = formatarData.format(data)
+
+        return dataFormatada
+
+    }
+
     override fun onStop() {
         super.onStop()
         Log.d("ciclofragment", "to no on stop do fragment jogos")
@@ -467,6 +507,7 @@ class JogosFragment: Fragment() {
     }
 
     private fun findPartidasDaPrimeiraRodada(grupo: String) {
+        turnOffNoMatchesTextView()
         binding!!.srlMatches.isRefreshing = true
         matchesApi!!.getMatches().enqueue(object: Callback<List<Partida>> {
             override fun onResponse(call: Call<List<Partida>>, response: Response<List<Partida>>) {
@@ -518,6 +559,7 @@ class JogosFragment: Fragment() {
     }
 
     private fun findPartidasDaSegundaRodada(grupo: String) {
+        turnOffNoMatchesTextView()
         binding!!.srlMatches.isRefreshing = true
         matchesApi!!.getMatches().enqueue(object: Callback<List<Partida>> {
             override fun onResponse(call: Call<List<Partida>>, response: Response<List<Partida>>) {
@@ -629,6 +671,7 @@ class JogosFragment: Fragment() {
     }
 
     private fun findPartidasDaTerceiraRodada(grupo: String) {
+        turnOffNoMatchesTextView()
         binding!!.srlMatches.isRefreshing = true
         matchesApi!!.getMatches().enqueue(object: Callback<List<Partida>> {
             override fun onResponse(call: Call<List<Partida>>, response: Response<List<Partida>>) {

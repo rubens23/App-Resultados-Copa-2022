@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
@@ -42,6 +43,7 @@ class PartidasAdapter(private val matchesList: List<Partida>): RecyclerView.Adap
     inner class ViewHolder(private val binding: MatchItemBinding): RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")
         fun bindData(partida: Partida) {
+
             Glide.with(binding.root.context).load(partida.mandante.imagem).circleCrop().into(binding.ivHomeTeam)
             Glide.with(binding.root.context).load(partida.visitante.imagem).circleCrop().into(binding.ivAwayTeam)
             binding.tvHomeTeamName.text = partida.mandante.nome

@@ -8,4 +8,5 @@
     <string name="txt_versus">X</string>
     <string name="tv_away_team_score"></string>
     <string name="error_api">unexpected error</string>
+    <string name="nao_tem_jogo_res">Hoje não tem nenhum jogo</string>
 </resources>
