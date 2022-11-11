@@ -438,6 +438,7 @@ class JogosFragment: Fragment() {
                         if (partida.estadio.data_jogo == diaAtual){
                             listaPartidas.add(partida)
 
+
                         }
 
                     }
@@ -486,7 +487,7 @@ class JogosFragment: Fragment() {
 
 
     private fun getCurrentDateToGetTodayMatches(): String {
-        val formatarData = SimpleDateFormat("dd-MM-yyyy")
+        val formatarData = SimpleDateFormat("dd/MM/yyyy")
         val data = Date()
         val dataFormatada = formatarData.format(data)
 
