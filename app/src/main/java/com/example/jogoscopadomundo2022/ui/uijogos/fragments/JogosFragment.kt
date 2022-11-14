@@ -1,6 +1,6 @@
 package com.example.jogoscopadomundo2022.ui.uijogos.fragments
 
-import android.content.Context
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,20 +8,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.appcompat.widget.Toolbar
 import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.*
-import androidx.datastore.preferences.preferencesDataStore
+import androidx.datastore.preferences.core.Preferences
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.jogoscopadomundo2022.R
 import com.example.jogoscopadomundo2022.data.jogos.MatchesApi
 import com.example.jogoscopadomundo2022.databinding.FragmentJogosBinding
 import com.example.jogoscopadomundo2022.domain.apijogos.Partida
 import com.example.jogoscopadomundo2022.ui.uijogos.adapters.PartidasAdapter
-import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -34,12 +32,9 @@ import java.util.*
 import kotlin.properties.Delegates
 
 
-class JogosFragment: Fragment() {
+class JogosFragment: Fragment(){
 
-    private lateinit var key2: Preferences.Key<String>
-    private lateinit var key: Preferences.Key<String>
-    private var currentCounterValue by Delegates.notNull<Int>()
-    private lateinit var datastore: DataStore<Preferences>
+
     private lateinit var binding: FragmentJogosBinding
     private var matchesApi: MatchesApi? = null
     private var adapter = PartidasAdapter(Collections.emptyList())
@@ -83,35 +78,11 @@ class JogosFragment: Fragment() {
 
         Log.d("testandoretornosave", "${savedInstanceState?.getString("teste")}")
 
-
-
-
-
-
-        /*
-        if(savedInstanceState != null){
-            createAdapterDoSpinnerGrupos(savedInstanceState.getStringArray("LISTA_GRUPOS") as Array<String>)
-            createAdapterDoSpinnerJogos(savedInstanceState.getStringArray("LISTA_GRUPOS") as Array<String>)
-            Log.d("onsavedinstance", "eu to no onsavedinstancestate")
-            mostrarPartidasDoDia = true
-            setupHttpClient()
-            setupMatchesList()
-            setupMatchesRefresh()
-        }else{
-
-        }
-
-         */
-
-        //mostrarPartidasDoDia = true
         createSpinnerList()
         setupHttpClient()
         setupMatchesList()
         Log.d("entendendo2", "to na linha acima da chamada do matches refresh")
         setupMatchesRefresh()
-
-        //saves key-value in datastore
-        //key do primeiro spinner
 
 
 
@@ -191,7 +162,11 @@ class JogosFragment: Fragment() {
     //todo fazer outro spinner que vai aparecer quando o usuario escolher a rodada aí ele vai poder escolher os jogos por grupo ou ver os jogos de todos os grupos
 
     private fun setJogosSpinnerClickListener() {
+        Log.d("testecliquespinner", "entrei no metodo do click listeners mas ainda n escolhi nenhuma opcao")
+        Log.d("testecliquespinner", "${listaSpinnerJogos.size}")
+
         binding.tvSpinner.setOnItemClickListener { _, _, pos, _ ->
+            Log.d("testecliquespinner", "cliquei em algum item, o spinner esta funcionando")
             if(pos == 0){
                 hideSpinnerGrupos()
                 findTodayMatchesFromApi()
@@ -618,7 +593,9 @@ class JogosFragment: Fragment() {
     override fun onResume() {
         super.onResume()
 
-        //dealWithDataUpdateOnRefresh()
+
+
+        ifLandscapeModeHideToolBar()
         createSpinnerList()
         createSpinnerGruposList()
         binding!!.tvSpinner.setSelection(0)
@@ -629,10 +606,42 @@ class JogosFragment: Fragment() {
 
     }
 
+    private fun ifLandscapeModeHideToolBar(){
+        if(resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
+            activity?.findViewById<Toolbar>(R.id.toolbar)?.visibility = View.GONE
+
+
+            binding.rvMatches.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+
+
+
+
+                }
+
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+                    val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+                    if(newState == RecyclerView.SCROLL_STATE_IDLE){
+                        bottomNav?.visibility = View.VISIBLE
+
+                    }
+                    if(newState == RecyclerView.SCROLL_STATE_DRAGGING){
+                        bottomNav?.visibility = View.GONE
+                    }
+                }
+            })
+
+
+        }
+    }
+
     private fun dealWithSpinnerAfterReturningFromAnotherFragment() {
         if(binding.tvSpinner.text.toString() != ""){
             if (binding.tvSpinner.text.toString() == "Jogos de Hoje"){
                 findTodayMatchesFromApi()
+                hideSpinnerGrupos()
                 Log.d("entendendo", "to no jogos de hoje")
 
             }
@@ -676,6 +685,7 @@ class JogosFragment: Fragment() {
         }else{
             //significa que ele esta vazio, se ele esta vazio, ele tem que mostrar os jogos do dia
             findTodayMatchesFromApi()
+            hideSpinnerGrupos()
         }
 
     }

@@ -1,5 +1,7 @@
 package com.example.jogoscopadomundo2022.ui.uitabelas.fragments
 
+import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,6 +17,7 @@ import com.example.jogoscopadomundo2022.data.tabelas.TabelasApi.Companion.BASE_U
 import com.example.jogoscopadomundo2022.databinding.FragmentTabelasBinding
 import com.example.jogoscopadomundo2022.domain.apitabelas.Tabelas
 import com.example.jogoscopadomundo2022.ui.uitabelas.adapters.TabelasAdapter
+import com.example.jogoscopadomundo2022.ui.uitabelas.interfaces.ContextProvider
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -30,7 +33,16 @@ class TabelasFragment: Fragment() {
 
     private lateinit var binding: FragmentTabelasBinding
     private var tabelasApi: TabelasApi? = null
-    private var adapter = TabelasAdapter(Collections.emptyList())
+    private var adapter = TabelasAdapter(object: ContextProvider{
+        override fun getContext(): Context {
+            return requireContext()
+        }
+
+        override fun getActivity(): Activity {
+            return requireActivity()
+        }
+
+    },Collections.emptyList())
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -301,7 +313,12 @@ class TabelasFragment: Fragment() {
                     }
 
 
-                    adapter = TabelasAdapter(listaTabelas)
+                    adapter = TabelasAdapter(object: ContextProvider{
+                        override fun getContext(): Context = requireContext()
+
+                        override fun getActivity(): Activity = requireActivity()
+
+                    },listaTabelas)
                     binding.rvTabelas.layoutManager = LinearLayoutManager(requireActivity())
                     binding.rvTabelas.adapter = adapter
                 } else {

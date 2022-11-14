@@ -1,11 +1,13 @@
 package com.example.jogoscopadomundo2022.ui.uijogos.fragments
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
@@ -45,20 +47,26 @@ class DetalhesJogoFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         
         partida = args.partida
 
+
         bindPartidaDataInViews()
+
         fazerListasDeGols()
 
         initViewModel()
-        setupMatchesRefresh()
+        //setupMatchesRefresh()
+
+
         
         
     }
 
 
     private fun initViewModel() {
+
         viewModel = ViewModelProvider(this)[ActivityDetailViewModel::class.java]
         //no observer vai ter que ter um algoritmo para filtrar só a partida que é do meu
         //interesse
@@ -74,11 +82,13 @@ class DetalhesJogoFragment: Fragment() {
                 }
             }
         }
+
+
     }
 
     private fun setupMatchesRefresh() {
+
         binding!!.srlMatches.setOnRefreshListener {
-            //Toast.makeText(requireContext(), "comecei a fazer o refresh", Toast.LENGTH_SHORT).show()
 
             viewModel.swipeRefreshLayout.observe(viewLifecycleOwner){
                 if(!it){
@@ -89,25 +99,43 @@ class DetalhesJogoFragment: Fragment() {
 
 
         }
+
+
     }
 
     override fun onResume() {
         super.onResume()
+
+
+
+        ifLandscapeModeHideToolBar()
         viewModel.findMatchesFromApi()
+        setupMatchesRefresh()
         setBottomNavigationHighlightInJogosOption()
 
 
 
 
         Log.d("ciclofragmentdet", "to no on resume do fragment detalhes")
+
+
+    }
+
+    private fun ifLandscapeModeHideToolBar(){
+        if(resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
+            activity?.findViewById<Toolbar>(R.id.toolbar)?.visibility = View.VISIBLE
+        }
     }
 
     private fun setBottomNavigationHighlightInJogosOption() {
+
         val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.bottomNavigationView)
         if(bottomNav != null){
             val item = bottomNav.menu.findItem(R.id.jogosFragment)
             item.isChecked = true
         }
+
+
     }
 
     override fun onStop() {
@@ -121,6 +149,7 @@ class DetalhesJogoFragment: Fragment() {
     }
 
     private fun atualizarListaGolsMandante(p: Partida) {
+
         listaGolsMandante.clear()
         p.jogo.autores_gols_time_mandante.forEach { jogadorQueFezGol ->
             if(jogadorQueFezGol.nome_jogador != null && jogadorQueFezGol.minuto_gol != null){
@@ -128,12 +157,18 @@ class DetalhesJogoFragment: Fragment() {
             }
         }
         if(listaGolsMandante.size > 0){
+
             setarListaGolsMandantesNoAdapter(listaGolsMandante)
             golsMandanteAdapter.notifyDataSetChanged()
+
+
         }
+
+
     }
 
     private fun atualizarListaGolsVisitante(p: Partida) {
+
         listaGolsVisitante.clear()
         p.jogo.autores_gols_time_visitante.forEach { jogadorQueFezGol ->
             if(jogadorQueFezGol.nome_jogador != null && jogadorQueFezGol.minuto_gol != null){
@@ -141,18 +176,27 @@ class DetalhesJogoFragment: Fragment() {
             }
         }
         if(listaGolsVisitante.size > 0){
+
             setarListaGolsVisitantesNoAdapter(listaGolsVisitante)
             golsVisitanteAdapter.notifyDataSetChanged()
+
+
         }
+
+
     }
 
     private fun fazerListasDeGols() {
+
         fazerListaDeGolsDoTimeMandante()
         fazerListaDeGolsDoTimeVisitante()
+
+
     }
 
 
     private fun fazerListaDeGolsDoTimeMandante() {
+
 
         partida?.jogo?.autores_gols_time_mandante?.forEach { jogadorQueFezGol ->
             if(jogadorQueFezGol.nome_jogador != null && jogadorQueFezGol.minuto_gol != null){
@@ -163,9 +207,12 @@ class DetalhesJogoFragment: Fragment() {
             setarListaGolsMandantesNoAdapter(listaGolsMandante)
         }
 
+
+
     }
 
     private fun fazerListaDeGolsDoTimeVisitante() {
+
         partida?.jogo?.autores_gols_time_visitante?.forEach { jogadorQueFezGol ->
             if(jogadorQueFezGol.nome_jogador != null && jogadorQueFezGol.minuto_gol != null){
                 listaGolsVisitante.add(jogadorQueFezGol)
@@ -177,22 +224,31 @@ class DetalhesJogoFragment: Fragment() {
 
 
 
+
+
     }
 
     private fun setarListaGolsMandantesNoAdapter(listaGolsMandante: ArrayList<AutorGolMandante>) {
+
         golsMandanteAdapter = GolsMandanteAdapter(listaGolsMandante)
-        binding.recyclerGoalsHomeTeam.layoutManager = LinearLayoutManager(requireContext())
-        binding.recyclerGoalsHomeTeam.adapter = golsMandanteAdapter
+        binding.recyclerGoalsHomeTeam?.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerGoalsHomeTeam?.adapter = golsMandanteAdapter
+
+
     }
 
 
     private fun setarListaGolsVisitantesNoAdapter(listaGolsVisitante: ArrayList<AutorGolVisitante>) {
+
         golsVisitanteAdapter = GolsVisitanteAdapter(listaGolsVisitante)
-        binding.recyclerGoalsAwayTeam.layoutManager = LinearLayoutManager(requireContext())
-        binding.recyclerGoalsAwayTeam.adapter = golsVisitanteAdapter
+        binding.recyclerGoalsAwayTeam?.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerGoalsAwayTeam?.adapter = golsVisitanteAdapter
+
+
     }
 
     private fun bindPartidaDataInViews() {
+
         partida?.let {
 
             binding.tvDescription.text = it.descricao
@@ -211,10 +267,14 @@ class DetalhesJogoFragment: Fragment() {
                 binding.tvAwayTeamScore.text = it.visitante.placar.toString()
             }
         }
+
+
     }
 
     private fun updatePartidaDataInViews(p: Partida) {
+
         p?.let {
+
 
             binding.tvDescription.text = it.descricao
             binding.tvFase.text = it.estadio.fase
@@ -232,5 +292,8 @@ class DetalhesJogoFragment: Fragment() {
                 binding.tvAwayTeamScore.text = it.visitante.placar.toString()
             }
         }
+
+
+
     }
 }

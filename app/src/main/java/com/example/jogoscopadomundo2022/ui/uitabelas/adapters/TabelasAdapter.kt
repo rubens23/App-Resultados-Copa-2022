@@ -1,15 +1,27 @@
 package com.example.jogoscopadomundo2022.ui.uitabelas.adapters
 
+import android.app.Activity
+import android.content.res.Configuration
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.jogoscopadomundo2022.R
 import com.example.jogoscopadomundo2022.databinding.ItemTabelaBinding
 import com.example.jogoscopadomundo2022.domain.apitabelas.Tabelas
+import com.example.jogoscopadomundo2022.ui.uitabelas.interfaces.ContextProvider
 
 
-class TabelasAdapter(val listaTabelas: List<Tabelas>): RecyclerView.Adapter<TabelasAdapter.ViewHolder>() {
-    class ViewHolder(val binding: ItemTabelaBinding): RecyclerView.ViewHolder(binding.root) {
+class TabelasAdapter(val contextProvider: ContextProvider, val listaTabelas: List<Tabelas>): RecyclerView.Adapter<TabelasAdapter.ViewHolder>() {
+
+
+
+    inner class ViewHolder(val binding: ItemTabelaBinding): RecyclerView.ViewHolder(binding.root) {
+
+        private var mContextProvider: ContextProvider = contextProvider
+
         fun bindData(tabela: Tabelas){
             binding.tvTabelaGrupo.text = "Grupo ${tabela.grupo}"
             bindLinhaPrimeiraPosicaoTabela(tabela)
@@ -29,6 +41,13 @@ class TabelasAdapter(val listaTabelas: List<Tabelas>): RecyclerView.Adapter<Tabe
             binding.qntDerrotas1.text = tabela.time1.derrotas.toString()
             binding.qntEmpates1.text = tabela.time1.empates.toString()
             binding.saldoGols1.text = tabela.time1.saldo_gols.toString()
+            if(mContextProvider.getContext().resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
+                mContextProvider.getActivity().findViewById<Toolbar>(R.id.toolbar)?.visibility = View.GONE
+
+                binding.apro1?.text = tabela.time1.aproveitamento.toString() + "%"
+                binding.golsContra1?.text = tabela.time1.gols_pro.toString()
+                binding.golsPro1?.text = tabela.time1.gols_contra.toString()
+            }
         }
 
         private fun bindLinhaSegundaPosicaoTabela(tabela: Tabelas) {
@@ -41,6 +60,14 @@ class TabelasAdapter(val listaTabelas: List<Tabelas>): RecyclerView.Adapter<Tabe
             binding.qntDerrotas2.text = tabela.time2.derrotas.toString()
             binding.qntEmpates2.text = tabela.time2.empates.toString()
             binding.saldoGols2.text = tabela.time2.saldo_gols.toString()
+
+            if(mContextProvider.getContext().resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
+                mContextProvider.getActivity().findViewById<Toolbar>(R.id.toolbar)?.visibility = View.GONE
+
+                binding.apro2?.text = tabela.time2.aproveitamento.toString() + "%"
+                binding.golsContra2?.text = tabela.time2.gols_pro.toString()
+                binding.golsPro2?.text = tabela.time2.gols_contra.toString()
+            }
 
         }
 
@@ -55,6 +82,14 @@ class TabelasAdapter(val listaTabelas: List<Tabelas>): RecyclerView.Adapter<Tabe
             binding.qntEmpates3.text = tabela.time3.empates.toString()
             binding.saldoGols3.text = tabela.time3.saldo_gols.toString()
 
+            if(mContextProvider.getContext().resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
+                mContextProvider.getActivity().findViewById<Toolbar>(R.id.toolbar)?.visibility = View.GONE
+
+                binding.apro3?.text = tabela.time3.aproveitamento.toString() + "%"
+                binding.golsContra3?.text = tabela.time3.gols_pro.toString()
+                binding.golsPro3?.text = tabela.time3.gols_contra.toString()
+            }
+
         }
 
         private fun bindLinhaQuartaPosicaoTabela(tabela: Tabelas) {
@@ -67,6 +102,14 @@ class TabelasAdapter(val listaTabelas: List<Tabelas>): RecyclerView.Adapter<Tabe
             binding.qntDerrotas4.text = tabela.time4.derrotas.toString()
             binding.qntEmpates4.text = tabela.time4.empates.toString()
             binding.saldoGols4.text = tabela.time4.saldo_gols.toString()
+
+            if(mContextProvider.getContext().resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
+                mContextProvider.getActivity().findViewById<Toolbar>(R.id.toolbar)?.visibility = View.GONE
+
+                binding.apro4?.text = tabela.time4.aproveitamento.toString() + "%"
+                binding.golsContra4?.text = tabela.time4.gols_pro.toString()
+                binding.golsPro4?.text = tabela.time4.gols_contra.toString()
+            }
 
         }
 
