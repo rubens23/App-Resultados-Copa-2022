@@ -1,7 +1,10 @@
 package com.example.jogoscopadomundo2022.ui.uijogos.fragments
 
+
+import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +15,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.jogoscopadomundo2022.R
@@ -19,6 +23,7 @@ import com.example.jogoscopadomundo2022.data.jogos.MatchesApi
 import com.example.jogoscopadomundo2022.databinding.FragmentJogosBinding
 import com.example.jogoscopadomundo2022.domain.apijogos.Partida
 import com.example.jogoscopadomundo2022.ui.uijogos.adapters.PartidasAdapter
+import com.example.jogoscopadomundo2022.ui.uijogos.viewmodels.JogosFragmentViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -45,6 +50,9 @@ class JogosFragment: Fragment(){
     private var mostrarPartidasTerceiraRodada = false
     private lateinit var listaSpinnerGrupos: Array<String>
     private lateinit var listaSpinnerJogos: Array<String>
+    private lateinit var linearLayoutManager: LinearLayoutManager
+    private var lastPosition: Int? = null
+    private lateinit var viewModel: JogosFragmentViewModel
 
 
     //recycler view in landscape mode
@@ -78,11 +86,18 @@ class JogosFragment: Fragment(){
 
         Log.d("testandoretornosave", "${savedInstanceState?.getString("teste")}")
 
+
+        linearLayoutManager = LinearLayoutManager(requireActivity())
         createSpinnerList()
         setupHttpClient()
         setupMatchesList()
         Log.d("entendendo2", "to na linha acima da chamada do matches refresh")
         setupMatchesRefresh()
+        initViewModel()
+
+
+
+        Log.d("testeposition", "$lastPosition")
 
 
 
@@ -93,12 +108,11 @@ class JogosFragment: Fragment(){
 
     }
 
+    private fun initViewModel() {
+        viewModel = ViewModelProvider(this)[JogosFragmentViewModel::class.java]
 
 
-
-
-
-
+    }
 
 
     private fun createSpinnerList() {
@@ -395,7 +409,7 @@ class JogosFragment: Fragment(){
     }
 
     private fun setupMatchesList() {
-        binding.rvMatches.layoutManager = LinearLayoutManager(requireActivity())
+        binding.rvMatches.layoutManager = linearLayoutManager
         binding.rvMatches.adapter = adapter
 
     }
@@ -431,12 +445,17 @@ class JogosFragment: Fragment(){
                         adapter = PartidasAdapter(listaPartidas)
                         binding.rvMatches.layoutManager = LinearLayoutManager(requireContext())
                         binding.rvMatches.adapter = adapter
+                        binding.rvMatches.scrollToPosition(lastPosition!!)
                     }else{
                         //lista é vazia e mensagem tem que aparecer
                         turnOnNoMatchesTextView()
                         adapter = PartidasAdapter(listaPartidas)
                         binding.rvMatches.layoutManager = LinearLayoutManager(requireContext())
                         binding.rvMatches.adapter = adapter
+                        if(lastPosition != null){
+                            binding.rvMatches.scrollToPosition(lastPosition!!)
+
+                        }
                         Log.d("testejogoshj", "lista de jogos de hoje esta vazia")
                     }
 
@@ -479,12 +498,25 @@ class JogosFragment: Fragment(){
     override fun onStop() {
         super.onStop()
         Log.d("ciclofragment", "to no on stop do fragment jogos")
+        val getPrefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
+        val e: SharedPreferences.Editor = getPrefs.edit()
+        if(lastPosition != null){
+            Log.d("testeposition", "last position nao é nulo e to no onStop")
+            Log.d("testeposition", "Esse é o lastPosition no onStop: $lastPosition")
+
+
+            e.putInt("lastPos", lastPosition!!)
+            viewModel.setPosition(lastPosition!!)
+        }
 
     }
 
     override fun onDestroy() {
         super.onDestroy()
         Log.d("ciclofragment", "to no on destroy do fragment jogos")
+        //save position in shared preferences after destroy
+
+
 
     }
 
@@ -522,8 +554,11 @@ class JogosFragment: Fragment(){
 
 
                     adapter = PartidasAdapter(listaPartidas)
-                    binding!!.rvMatches.layoutManager = LinearLayoutManager(requireActivity())
+                    binding!!.rvMatches.layoutManager = linearLayoutManager
                     binding!!.rvMatches.adapter = adapter
+                    if(lastPosition != null){
+                        binding.rvMatches.scrollToPosition(lastPosition!!)
+                    }
                 } else {
                     showErrorMessage()
                 }
@@ -572,8 +607,11 @@ class JogosFragment: Fragment(){
 
 
                     adapter = PartidasAdapter(listaPartidas)
-                    binding!!.rvMatches.layoutManager = LinearLayoutManager(requireActivity())
+                    binding!!.rvMatches.layoutManager = linearLayoutManager
                     binding!!.rvMatches.adapter = adapter
+                    if(lastPosition != null){
+                        binding.rvMatches.scrollToPosition(lastPosition!!)
+                    }
                 } else {
                     showErrorMessage()
                 }
@@ -595,13 +633,20 @@ class JogosFragment: Fragment(){
 
 
 
+
+
         ifLandscapeModeHideToolBar()
         createSpinnerList()
         createSpinnerGruposList()
         binding!!.tvSpinner.setSelection(0)
         Log.d("ciclodevida", "to no onresume")
         dealWithSpinnerAfterReturningFromAnotherFragment()
-        //read key value in datastore
+
+
+        //retrieve last position
+        val getPrefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
+        lastPosition = viewModel.getCurrentPosition()
+        Log.d("testeposition", "Esse é o lastPosition no onResume: $lastPosition")
 
 
     }
@@ -609,7 +654,6 @@ class JogosFragment: Fragment(){
     private fun ifLandscapeModeHideToolBar(){
         if(resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
             activity?.findViewById<Toolbar>(R.id.toolbar)?.visibility = View.GONE
-
 
             binding.rvMatches.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -622,9 +666,15 @@ class JogosFragment: Fragment(){
 
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                     super.onScrollStateChanged(recyclerView, newState)
+                    lastPosition = linearLayoutManager.findFirstVisibleItemPosition()
+                    Log.d("testeposition", "Acabei de colocar o valor de lastposition aqui no scrollstate changed: $lastPosition")
+
+
+
                     val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.bottomNavigationView)
                     if(newState == RecyclerView.SCROLL_STATE_IDLE){
                         bottomNav?.visibility = View.VISIBLE
+
 
                     }
                     if(newState == RecyclerView.SCROLL_STATE_DRAGGING){
@@ -634,6 +684,34 @@ class JogosFragment: Fragment(){
             })
 
 
+        }else{
+            binding.rvMatches.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+
+
+
+
+                }
+
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+                    lastPosition = linearLayoutManager.findFirstVisibleItemPosition()
+                    Log.d("testeposition", "Acabei de colocar o valor de lastposition aqui no scrollstate changed: $lastPosition")
+
+
+
+
+                    if(newState == RecyclerView.SCROLL_STATE_IDLE){
+
+
+
+                    }
+                    if(newState == RecyclerView.SCROLL_STATE_DRAGGING){
+
+                    }
+                }
+            })
         }
     }
 
@@ -722,8 +800,11 @@ class JogosFragment: Fragment(){
 
 
                     adapter = PartidasAdapter(listaPartidas)
-                    binding!!.rvMatches.layoutManager = LinearLayoutManager(requireActivity())
+                    binding!!.rvMatches.layoutManager = linearLayoutManager
                     binding!!.rvMatches.adapter = adapter
+                    if(lastPosition != null){
+                        binding.rvMatches.scrollToPosition(lastPosition!!)
+                    }
                 } else {
                     showErrorMessage()
                 }
@@ -751,7 +832,7 @@ class JogosFragment: Fragment(){
                     val partidas: List<Partida> = response.body()!!
 
                     adapter = PartidasAdapter(partidas)
-                    binding!!.rvMatches.layoutManager = LinearLayoutManager(requireActivity())
+                    binding!!.rvMatches.layoutManager = linearLayoutManager
                     binding!!.rvMatches.adapter = adapter
                 } else {
                     showErrorMessage()
