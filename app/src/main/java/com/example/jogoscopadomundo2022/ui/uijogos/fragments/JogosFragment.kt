@@ -51,7 +51,7 @@ class JogosFragment: Fragment(){
     private lateinit var listaSpinnerGrupos: Array<String>
     private lateinit var listaSpinnerJogos: Array<String>
     private lateinit var linearLayoutManager: LinearLayoutManager
-    private var lastPosition: Int? = null
+    private var lastPosition: Int? = 0
     private lateinit var viewModel: JogosFragmentViewModel
 
 
@@ -445,7 +445,10 @@ class JogosFragment: Fragment(){
                         adapter = PartidasAdapter(listaPartidas)
                         binding.rvMatches.layoutManager = LinearLayoutManager(requireContext())
                         binding.rvMatches.adapter = adapter
-                        binding.rvMatches.scrollToPosition(lastPosition!!)
+                        if(lastPosition != null){
+                            binding.rvMatches.scrollToPosition(lastPosition!!)
+                        }
+
                     }else{
                         //lista é vazia e mensagem tem que aparecer
                         turnOnNoMatchesTextView()
