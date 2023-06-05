@@ -42,7 +42,7 @@ Faça o download da <a href="apk/app-debug.apk?raw=true">APK diretamente</a>. Vo
 
 - Componentes da SDK do android que foram utilizados:
   - Swipe Refresh Layout: Usado para implementação da atualização da tela ao fazer o swipe na tela.
-  - View Model: Utilizado para fornecer um pouco de dascoplamento entre a camada de dados e a view.
+  - View Model: Utilizado para fornecer um pouco de desacoplamento entre a camada de dados e a view.
   - Navigation: Utilizado para facilitar o código da navegação entre telas no app.
   - Fragment: Os fragments foram utilizados para fornecer uma organização melhor para as telas do meu app. Além de funcionar muito bem com o NvigationComponent.
   - LiveData: Obedece o ciclo de vida da view e fornece a funcionalidade de observer para variáveis que necessitam ser observadas para notificar quando os dados foram obtidos para fazer todo o processo de atualização das views.
@@ -53,16 +53,15 @@ Faça o download da <a href="apk/app-debug.apk?raw=true">APK diretamente</a>. Vo
   - Eu também utilizei uma interface para servir de intermediario entre a api e a classe que deseja obter os dados.
   
 - Bibliotecas 
-  - [Play Services Location](https://mvnrepository.com/artifact/com.google.android.gms/play-services-location?repo=google): Biblioteca do google para lidar com geolocalização.
-  - [Retrofit](https://square.github.io/retrofit/): Biblioteca para fazer requisições HTTP para APIs.
+  - [Retrofit](https://square.github.io/retrofit/): Biblioteca para fazer requisições HTTP para as APIs.
   - [Gson Converter](https://github.com/square/retrofit/tree/master/retrofit-converters/gson): Biblioteca para converter objetos JSON em objetos JAVA compreendíveis no Android Studio.
   - [okHttp Logging Interceptor](https://github.com/square/okhttp/tree/master/okhttp-logging-interceptor): Biblioteca que serve para obter Logs mais detalhados das requisições HTTPs.
-  - [Picasso](https://square.github.io/picasso/): Biblioteca para carregar imagens através da url e armazená-las em cache.
-  - [Firebase Analytics](https://firebase.google.com/docs/analytics): Biblioteca para obter estatísticas úteis sobre o uso do app.
-  - [Firebase CrashLytics](https://firebase.google.com/docs/crashlytics): Biblioteca para obter relatórios de erros que ocorrem na execução do app.
+  - [Glide](https://github.com/bumptech/glide): Biblioteca para carregar imagens através da url e armazená-las em cache.
+
 
 ## Arquitetura
-**App Clima** utiliza a arquitetura MVVM e o padrão de Repositories, que segue as [recomendações oficiais do Google](https://developer.android.com/topic/architecture).
+**App Resultados Copa 2022** utiliza a arquitetura [MVVM]
+(https://developer.android.com/topic/architecture).
 </br></br>
 <img width="60%" src="screenshots/arquitetura.png">
 <br>
