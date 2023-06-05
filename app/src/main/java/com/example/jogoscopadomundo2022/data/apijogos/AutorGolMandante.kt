@@ -1,10 +1,11 @@
-package com.example.jogoscopadomundo2022.domain.apijogos
+package com.example.jogoscopadomundo2022.data.apijogos
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
+
 @Parcelize
-data class AutorGolVisitante(
+data class AutorGolMandante(
     val nome_jogador: String?,
     val minuto_gol: String?
 ): Parcelable

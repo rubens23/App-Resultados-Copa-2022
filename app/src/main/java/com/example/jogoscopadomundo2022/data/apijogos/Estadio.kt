@@ -1,4 +1,4 @@
-package com.example.jogoscopadomundo2022.domain.apijogos
+package com.example.jogoscopadomundo2022.data.apijogos
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

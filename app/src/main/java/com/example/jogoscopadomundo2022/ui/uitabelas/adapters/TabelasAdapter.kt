@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.jogoscopadomundo2022.R
 import com.example.jogoscopadomundo2022.databinding.ItemTabelaBinding
-import com.example.jogoscopadomundo2022.domain.apitabelas.Tabelas
+import com.example.jogoscopadomundo2022.data.apitabelas.Tabelas
 import com.example.jogoscopadomundo2022.ui.uitabelas.interfaces.ContextProvider
 
 

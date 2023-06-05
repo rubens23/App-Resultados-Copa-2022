@@ -15,7 +15,7 @@ import com.example.jogoscopadomundo2022.R
 import com.example.jogoscopadomundo2022.data.tabelas.TabelasApi
 import com.example.jogoscopadomundo2022.data.tabelas.TabelasApi.Companion.BASE_URL
 import com.example.jogoscopadomundo2022.databinding.FragmentTabelasBinding
-import com.example.jogoscopadomundo2022.domain.apitabelas.Tabelas
+import com.example.jogoscopadomundo2022.data.apitabelas.Tabelas
 import com.example.jogoscopadomundo2022.ui.uitabelas.adapters.TabelasAdapter
 import com.example.jogoscopadomundo2022.ui.uitabelas.interfaces.ContextProvider
 import okhttp3.OkHttpClient

@@ -1,7 +1,7 @@
 package com.example.jogoscopadomundo2022.data.tabelas
 
 
-import com.example.jogoscopadomundo2022.domain.apitabelas.Tabelas
+import com.example.jogoscopadomundo2022.data.apitabelas.Tabelas
 import retrofit2.Call
 import retrofit2.http.GET
 

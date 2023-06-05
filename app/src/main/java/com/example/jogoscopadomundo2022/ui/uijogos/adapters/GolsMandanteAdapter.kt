@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.jogoscopadomundo2022.databinding.GolsMandanteItemBinding
-import com.example.jogoscopadomundo2022.domain.apijogos.AutorGolMandante
+import com.example.jogoscopadomundo2022.data.apijogos.AutorGolMandante
 
 class GolsMandanteAdapter(val listaGolsMandante: ArrayList<AutorGolMandante>) : RecyclerView.Adapter<GolsMandanteAdapter.ViewHolder>() {
     class ViewHolder(val binding: GolsMandanteItemBinding): RecyclerView.ViewHolder(binding.root) {

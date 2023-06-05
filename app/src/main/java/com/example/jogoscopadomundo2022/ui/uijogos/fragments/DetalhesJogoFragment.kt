@@ -15,9 +15,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.jogoscopadomundo2022.R
 import com.example.jogoscopadomundo2022.databinding.FragmentDetalhesJogoBinding
-import com.example.jogoscopadomundo2022.domain.apijogos.AutorGolMandante
-import com.example.jogoscopadomundo2022.domain.apijogos.AutorGolVisitante
-import com.example.jogoscopadomundo2022.domain.apijogos.Partida
+import com.example.jogoscopadomundo2022.data.apijogos.AutorGolMandante
+import com.example.jogoscopadomundo2022.data.apijogos.AutorGolVisitante
+import com.example.jogoscopadomundo2022.data.apijogos.Partida
 import com.example.jogoscopadomundo2022.ui.uijogos.adapters.GolsMandanteAdapter
 import com.example.jogoscopadomundo2022.ui.uijogos.adapters.GolsVisitanteAdapter
 import com.example.jogoscopadomundo2022.ui.uijogos.viewmodels.ActivityDetailViewModel

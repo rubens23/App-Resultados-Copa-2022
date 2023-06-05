@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.jogoscopadomundo2022.data.jogos.MatchesApi
-import com.example.jogoscopadomundo2022.domain.apijogos.Partida
+import com.example.jogoscopadomundo2022.data.apijogos.Partida
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call

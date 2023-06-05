@@ -1,6 +1,6 @@
 package com.example.jogoscopadomundo2022.data.jogos
 
-import com.example.jogoscopadomundo2022.domain.apijogos.Partida
+import com.example.jogoscopadomundo2022.data.apijogos.Partida
 import retrofit2.Call
 import retrofit2.http.GET
 

@@ -1,4 +1,4 @@
-package com.example.jogoscopadomundo2022.domain.apitabelas
+package com.example.jogoscopadomundo2022.data.apitabelas
 
 data class InfoTimeTabela(
     val nome: String,

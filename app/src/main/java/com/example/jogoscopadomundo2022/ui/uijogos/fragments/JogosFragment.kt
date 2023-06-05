@@ -4,6 +4,7 @@ package com.example.jogoscopadomundo2022.ui.uijogos.fragments
 import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Bundle
+import android.os.Handler
 import android.preference.PreferenceManager
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,8 +13,6 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,7 +20,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.jogoscopadomundo2022.R
 import com.example.jogoscopadomundo2022.data.jogos.MatchesApi
 import com.example.jogoscopadomundo2022.databinding.FragmentJogosBinding
-import com.example.jogoscopadomundo2022.domain.apijogos.Partida
+import com.example.jogoscopadomundo2022.data.apijogos.Partida
 import com.example.jogoscopadomundo2022.ui.uijogos.adapters.PartidasAdapter
 import com.example.jogoscopadomundo2022.ui.uijogos.viewmodels.JogosFragmentViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -34,7 +33,6 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.properties.Delegates
 
 
 class JogosFragment: Fragment(){
@@ -76,6 +74,7 @@ class JogosFragment: Fragment(){
         binding = FragmentJogosBinding.inflate(inflater)
 
         Log.d("ciclodevida", "to no onCreateView")
+        linearLayoutManager = LinearLayoutManager(requireActivity())
 
 
         return binding.root
@@ -84,10 +83,11 @@ class JogosFragment: Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         Log.d("testandoretornosave", "${savedInstanceState?.getString("teste")}")
 
 
-        linearLayoutManager = LinearLayoutManager(requireActivity())
+
         createSpinnerList()
         setupHttpClient()
         setupMatchesList()
@@ -158,7 +158,7 @@ class JogosFragment: Fragment(){
 
 
 
-    private fun setSpinnerAdapter(adapterSpinnerJogos: ArrayAdapter<String>) {
+    fun setSpinnerAdapter(adapterSpinnerJogos: ArrayAdapter<String>) {
         binding?.tvSpinner?.setAdapter(adapterSpinnerJogos)
 
         setJogosSpinnerClickListener()
@@ -355,16 +355,8 @@ class JogosFragment: Fragment(){
         Log.d("entendendo3", "mostrarPartidasPrimeiraRodada: ${mostrarPartidasPrimeiraRodada}")
         Log.d("entendendo3", "mostrarPartidasSegundaRodada: ${mostrarPartidasSegundaRodada}")
         Log.d("entendendo3", "mostrarPartidasTerceiraRodada: ${mostrarPartidasTerceiraRodada}")
-        /*
-        if(!mostrarTodasPartidas
-            && !mostrarPartidasDoDia
-            && !mostrarPartidasPrimeiraRodada
-            && !mostrarPartidasSegundaRodada
-            && !mostrarPartidasTerceiraRodada){
-            findTodayMatchesFromApi()
-        }
 
-         */
+
         dealWithSpinnerAfterReturningFromAnotherFragment()
         if(mostrarTodasPartidas){
             findMatchesFromApi()
@@ -453,7 +445,7 @@ class JogosFragment: Fragment(){
                         //lista é vazia e mensagem tem que aparecer
                         turnOnNoMatchesTextView()
                         adapter = PartidasAdapter(listaPartidas)
-                        binding.rvMatches.layoutManager = LinearLayoutManager(requireContext())
+                        //binding.rvMatches.layoutManager = LinearLayoutManager(requireContext())
                         binding.rvMatches.adapter = adapter
                         if(lastPosition != null){
                             binding.rvMatches.scrollToPosition(lastPosition!!)
@@ -498,19 +490,24 @@ class JogosFragment: Fragment(){
 
     }
 
+    //vamos ver se ao ir para o fragment de detalhes ele ta passando
+    //a last position para o viewModel
+
     override fun onStop() {
         super.onStop()
         Log.d("ciclofragment", "to no on stop do fragment jogos")
-        val getPrefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
-        val e: SharedPreferences.Editor = getPrefs.edit()
         if(lastPosition != null){
             Log.d("testeposition", "last position nao é nulo e to no onStop")
             Log.d("testeposition", "Esse é o lastPosition no onStop: $lastPosition")
 
 
-            e.putInt("lastPos", lastPosition!!)
+
             viewModel.setPosition(lastPosition!!)
+        }else{
+            Log.d("ciclofragment", "last position é null, por isso que ele n enviou as informacoes para o viewModel")
         }
+        Log.d("ciclofragment", "testando o lastposition aqui no onStop ${lastPosition}")
+
 
     }
 
@@ -699,8 +696,11 @@ class JogosFragment: Fragment(){
 
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                     super.onScrollStateChanged(recyclerView, newState)
-                    lastPosition = linearLayoutManager.findFirstVisibleItemPosition()
+                    lastPosition =
+                        (recyclerView.layoutManager as LinearLayoutManager?)!!.findFirstVisibleItemPosition()
+                    //o onscroll state changed ta mudando quando eu scrollo os jogos de hj
                     Log.d("testeposition", "Acabei de colocar o valor de lastposition aqui no scrollstate changed: $lastPosition")
+                    
 
 
 

@@ -24,7 +24,7 @@
             app:destination="@id/jogosFragment" />
         <argument
             android:name="partida"
-            app:argType="com.example.jogoscopadomundo2022.domain.apijogos.Partida" />
+            app:argType="com.example.jogoscopadomundo2022.data.apijogos.Partida" />
     </fragment>
 
     <fragment
