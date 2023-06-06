@@ -1,5 +1,5 @@
 
-<h1 align="center">App Clima</h1>
+<h1 align="center">App Resultados Copa 2022</h1>
 
 <p align="center">
   <a href="https://opensource.org/licenses/Apache-2.0"><img alt="License" src="https://img.shields.io/badge/License-Apache%202.0-blue.svg"/></a>
@@ -47,6 +47,8 @@ Faça o download da <a href="apk/app-debug.apk?raw=true">APK diretamente</a>. Vo
   - Fragment: Os fragments foram utilizados para fornecer uma organização melhor para as telas do meu app. Além de funcionar muito bem com o NvigationComponent.
   - LiveData: Obedece o ciclo de vida da view e fornece a funcionalidade de observer para variáveis que necessitam ser observadas para notificar quando os dados foram obtidos para fazer todo o processo de atualização das views.
   - ViewBinding: Fornece uma maneira simples de referenciar os elementos da view nas classes que precisam manipular de alguma forma esses elementos.
+  - Espresso: biblioteca utilizada para fazer testes de ui no meu aplicativo.
+  - JUnit4: biblioteca para conseguir rodar testes automatizados no android studio.
 
 - Arquitetura 
   - MVVM (View - ViewModel - Model): Utilizada para colocar um intermediário entre a view e a lógica de negócio. No meu app a viewModel presente na arquitetura mvvm me ajuda a separar a lógica de obtençao de dados da camada de view(fragments e activity).
