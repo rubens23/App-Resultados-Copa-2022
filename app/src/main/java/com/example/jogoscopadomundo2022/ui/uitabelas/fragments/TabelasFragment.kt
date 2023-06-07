@@ -10,21 +10,14 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.jogoscopadomundo2022.R
-import com.example.jogoscopadomundo2022.data.tabelas.TabelasApi
-import com.example.jogoscopadomundo2022.data.tabelas.TabelasApi.Companion.BASE_URL
 import com.example.jogoscopadomundo2022.databinding.FragmentTabelasBinding
 import com.example.jogoscopadomundo2022.data.apitabelas.Tabelas
+import com.example.jogoscopadomundo2022.ui.uitabelas.viewmodels.TabelasFragmentViewModel
 import com.example.jogoscopadomundo2022.ui.uitabelas.adapters.TabelasAdapter
 import com.example.jogoscopadomundo2022.ui.uitabelas.interfaces.ContextProvider
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.util.*
 
 
@@ -32,7 +25,7 @@ class TabelasFragment: Fragment() {
 
 
     private lateinit var binding: FragmentTabelasBinding
-    private var tabelasApi: TabelasApi? = null
+    private lateinit var tabelasFragmentViewModel: TabelasFragmentViewModel
     private var adapter = TabelasAdapter(object: ContextProvider{
         override fun getContext(): Context {
             return requireContext()
@@ -57,12 +50,68 @@ class TabelasFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initViewModel()
         createSpinnerList()
-        setupHttpClient()
         setupTabelasList()
         setupTabelasRefresh()
         
         
+    }
+
+
+
+    private fun initViewModel() {
+        tabelasFragmentViewModel = ViewModelProvider(requireActivity())[TabelasFragmentViewModel::class.java]
+        initViewModelLiveDatas()
+        initObservers()
+    }
+
+    private fun initViewModelLiveDatas(){
+        tabelasFragmentViewModel.tabelasErrorLiveData()
+        tabelasFragmentViewModel.tabelasRepositoryListener()
+    }
+
+    private fun initObservers() {
+        tabelasFragmentViewModel.tabelasLiveDataTest.observe(viewLifecycleOwner){
+            Log.d("testeobserve","to aqui no fragment $it")
+        }
+        tabelasFragmentViewModel.listaTabelasLDViewModel.observe(viewLifecycleOwner){
+            listaTabelas->
+            setupAdapter(listaTabelas)
+        }
+
+        tabelasFragmentViewModel.errorLiveData.observe(viewLifecycleOwner){
+            showErrorMessage(it)
+        }
+    }
+
+    private fun showErrorMessage(it: String?) {
+        it?.let{
+            Toast.makeText(requireActivity(), it, Toast.LENGTH_LONG).show()
+
+        }
+        binding.srlMatches.isRefreshing = false
+
+
+    }
+
+    private fun setupAdapter(listaTabelas: MutableList<Tabelas>?) {
+        if(listaTabelas != null){
+            adapter = TabelasAdapter(object: ContextProvider {
+                override fun getContext(): Context = requireContext()
+
+                override fun getActivity(): Activity = requireActivity()
+
+            },listaTabelas)
+
+            binding.rvTabelas.layoutManager = LinearLayoutManager(requireActivity())
+            binding.rvTabelas.adapter = adapter
+        }
+
+        binding.srlMatches.isRefreshing = false
+
+
+
     }
 
     private fun createSpinnerList() {
@@ -138,19 +187,7 @@ class TabelasFragment: Fragment() {
         }
     }
 
-    private fun setupHttpClient() {
-        val logging = HttpLoggingInterceptor()
-        logging.setLevel(HttpLoggingInterceptor.Level.BASIC)
 
-        val client = OkHttpClient.Builder()
-            .addInterceptor(logging)
-            .build()
-
-        val retrofit = Retrofit.Builder().baseUrl(BASE_URL)
-            .client(client)
-            .addConverterFactory(GsonConverterFactory.create()).build()
-        tabelasApi = retrofit.create(TabelasApi::class.java)
-    }
 
     private fun setupTabelasList() {
         binding.rvTabelas.layoutManager = LinearLayoutManager(requireActivity())
@@ -233,111 +270,9 @@ class TabelasFragment: Fragment() {
 
     private fun callTabelasApi(posicaoSpinner: Int) {
         binding.srlMatches.isRefreshing = true
-        tabelasApi!!.getTabelas().enqueue(object: Callback<List<Tabelas>> {
-            override fun onResponse(call: Call<List<Tabelas>>, response: Response<List<Tabelas>>) {
-                Log.d("onresponse", "to no onresponse" + response.code())
-                if (response.isSuccessful()) {
-                    val listaTabelas: MutableList<Tabelas> = mutableListOf()
-                    when(posicaoSpinner){
-                        //grupo A
-                        0->{
-                            response.body()?.forEach {
-                                if(it.grupo == "A"){
-                                    listaTabelas.add(it)
-                                }
-                            }
-                        }
-                        //grupo B
-                        1->{
-                            response.body()?.forEach {
-                                if(it.grupo == "B"){
-                                    listaTabelas.add(it)
-                                }
-                            }
-                        }
-                        //grupo C
-                        2->{
-                            response.body()?.forEach {
-                                if(it.grupo == "C"){
-                                    listaTabelas.add(it)
-                                }
-                            }
-                        }
-                        //grupo D
-                        3->{
-                            response.body()?.forEach {
-                                if(it.grupo == "D"){
-                                    listaTabelas.add(it)
-                                }
-                            }
-                        }
-                        //grupo E
-                        4->{
-                            response.body()?.forEach {
-                                if(it.grupo == "E"){
-                                    listaTabelas.add(it)
-                                }
-                            }
-                        }
-                        //grupo F
-                        5->{
-                            response.body()?.forEach {
-                                if(it.grupo == "F"){
-                                    listaTabelas.add(it)
-                                }
-                            }
-                        }
-                        //grupo G
-                        6->{
-                            response.body()?.forEach {
-                                if(it.grupo == "G"){
-                                    listaTabelas.add(it)
-                                }
-                            }
-                        }
-                        //grupo H
-                        7->{
-                            response.body()?.forEach {
-                                if(it.grupo == "H"){
-                                    listaTabelas.add(it)
-                                }
-                            }
-                        }
-                        //Todos os grupos
-                        8->{
-                            response.body()?.forEach {
-                                listaTabelas.add(it)
+        tabelasFragmentViewModel.callTabelasApi(posicaoSpinner)
 
-                            }
-                        }
-                    }
-
-
-                    adapter = TabelasAdapter(object: ContextProvider{
-                        override fun getContext(): Context = requireContext()
-
-                        override fun getActivity(): Activity = requireActivity()
-
-                    },listaTabelas)
-                    binding.rvTabelas.layoutManager = LinearLayoutManager(requireActivity())
-                    binding.rvTabelas.adapter = adapter
-                } else {
-                    showErrorMessage()
-                }
-                binding.srlMatches.isRefreshing = false
-            }
-
-            override fun onFailure(call: Call<List<Tabelas>>, t: Throwable) {
-                Log.d("onfailure", "deu erro" + t.message.toString())
-                Toast.makeText(requireActivity(), "ocorreu um erro ao carregar os dados, verifique sua conexão com a internet e tente novamente!", Toast.LENGTH_LONG).show()
-                binding.srlMatches.isRefreshing = false
-
-            }
-
-        })
     }
 
-    private fun showErrorMessage() {
-        Toast.makeText(requireActivity(), "ocorreu um erro ao carregar os dados, verifique sua conexão com a internet e tente novamente!", Toast.LENGTH_LONG).show()
-    }
+
 }

@@ -4,7 +4,6 @@ package com.example.jogoscopadomundo2022.ui.uijogos.fragments
 import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Bundle
-import android.os.Handler
 import android.preference.PreferenceManager
 import android.util.Log
 import android.view.LayoutInflater
@@ -18,20 +17,14 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.jogoscopadomundo2022.R
-import com.example.jogoscopadomundo2022.data.jogos.MatchesApi
 import com.example.jogoscopadomundo2022.databinding.FragmentJogosBinding
 import com.example.jogoscopadomundo2022.data.apijogos.Partida
 import com.example.jogoscopadomundo2022.ui.uijogos.adapters.PartidasAdapter
 import com.example.jogoscopadomundo2022.ui.uijogos.viewmodels.JogosFragmentViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -39,7 +32,6 @@ class JogosFragment: Fragment(){
 
 
     private lateinit var binding: FragmentJogosBinding
-    private var matchesApi: MatchesApi? = null
     private var adapter = PartidasAdapter(Collections.emptyList())
     private var mostrarTodasPartidas = false
     private var mostrarPartidasDoDia = false
@@ -83,35 +75,140 @@ class JogosFragment: Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-        Log.d("testandoretornosave", "${savedInstanceState?.getString("teste")}")
-
-
-
         createSpinnerList()
-        setupHttpClient()
         setupMatchesList()
-        Log.d("entendendo2", "to na linha acima da chamada do matches refresh")
         setupMatchesRefresh()
         initViewModel()
 
 
 
-        Log.d("testeposition", "$lastPosition")
-
-
-
-
-
-        Log.d("ciclodevida", "to no onviewcreated")
-
 
     }
 
     private fun initViewModel() {
-        viewModel = ViewModelProvider(this)[JogosFragmentViewModel::class.java]
+        viewModel = ViewModelProvider(requireActivity())[JogosFragmentViewModel::class.java]
+        initViewModelsLiveDatas()
+        initObservers()
 
 
+    }
+
+    private fun initObservers() {
+        viewModel.listaJogosFromTodayMatches.observe(viewLifecycleOwner){
+            listaPartidas->
+            setupAdapterWithReceivedList(listaPartidas)
+        }
+        viewModel.errorFromTodayMatchesLiveData.observe(viewLifecycleOwner){
+            showErrorMessage(it)
+        }
+
+        viewModel.listaPartidasPrimeiraRodada.observe(viewLifecycleOwner){
+            listaPartidas->
+            setAdapterWithPrimeiraRodadaMatches(listaPartidas)
+        }
+
+        viewModel.listaPartidasSegundaRodada.observe(viewLifecycleOwner){
+            listaPartidas->
+            setAdapterWithSegundaRodadaMatches(listaPartidas)
+        }
+
+        viewModel.listaPartidasTerceiraRodada.observe(viewLifecycleOwner){
+            listaPartidas->
+            setAdapterWithTerceiraRodadaMatches(listaPartidas)
+        }
+
+        viewModel.listaTodasPartidas.observe(viewLifecycleOwner){
+            listaPartidas->
+            setAdapterWithListaTodasPartidas(listaPartidas)
+        }
+    }
+
+    private fun setAdapterWithListaTodasPartidas(listaPartidas: List<Partida>?) {
+        if(listaPartidas != null){
+            adapter = PartidasAdapter(listaPartidas)
+            binding.rvMatches.layoutManager = linearLayoutManager
+            binding.rvMatches.adapter = adapter
+        }
+        binding.srlMatches.isRefreshing = false
+
+    }
+
+    private fun setAdapterWithTerceiraRodadaMatches(listaPartidas: MutableList<Partida>?) {
+
+        if(listaPartidas != null){
+            adapter = PartidasAdapter(listaPartidas)
+            binding.rvMatches.layoutManager = linearLayoutManager
+            binding.rvMatches.adapter = adapter
+            if(lastPosition != null){
+                binding.rvMatches.scrollToPosition(lastPosition!!)
+            }
+        }
+        binding.srlMatches.isRefreshing = false
+
+    }
+
+    private fun setAdapterWithSegundaRodadaMatches(listaPartidas: MutableList<Partida>?) {
+        if(listaPartidas != null){
+            adapter = PartidasAdapter(listaPartidas)
+            binding.rvMatches.layoutManager = linearLayoutManager
+            binding.rvMatches.adapter = adapter
+            if(lastPosition != null){
+                binding.rvMatches.scrollToPosition(lastPosition!!)
+            }
+        }
+        binding.srlMatches.isRefreshing = false
+
+
+    }
+
+    private fun setAdapterWithPrimeiraRodadaMatches(listaPartidas: MutableList<Partida>?) {
+        if(listaPartidas != null){
+            adapter = PartidasAdapter(listaPartidas)
+            binding.rvMatches.layoutManager = linearLayoutManager
+            binding.rvMatches.adapter = adapter
+            if(lastPosition != null){
+                binding.rvMatches.scrollToPosition(lastPosition!!)
+            }
+        }
+        binding.srlMatches.isRefreshing = false
+
+
+    }
+
+    private fun setupAdapterWithReceivedList(listaPartidas: MutableList<Partida>?) {
+        if(listaPartidas != null){
+            if(listaPartidas.isNotEmpty()){
+                adapter = PartidasAdapter(listaPartidas)
+                binding.rvMatches.layoutManager = LinearLayoutManager(requireContext())
+                binding.rvMatches.adapter = adapter
+                if(lastPosition != null){
+                    binding.rvMatches.scrollToPosition(lastPosition!!)
+                }
+
+            }else{
+                //lista é vazia e mensagem tem que aparecer
+                turnOnNoMatchesTextView()
+                adapter = PartidasAdapter(listaPartidas)
+                //binding.rvMatches.layoutManager = LinearLayoutManager(requireContext())
+                binding.rvMatches.adapter = adapter
+                if(lastPosition != null){
+                    binding.rvMatches.scrollToPosition(lastPosition!!)
+
+                }
+            }
+        }
+        binding.srlMatches.isRefreshing = false
+
+
+    }
+
+    private fun initViewModelsLiveDatas() {
+        viewModel.listaPartidasFromTodayListener()
+        viewModel.errorFromTodayMatches()
+        viewModel.listaPartidasPrimeiraRodada()
+        viewModel.listaPartidasSegundaRodada()
+        viewModel.listaPartidasTerceiraRodada()
+        viewModel.listaTodasPartidasListener()
     }
 
 
@@ -159,7 +256,7 @@ class JogosFragment: Fragment(){
 
 
     fun setSpinnerAdapter(adapterSpinnerJogos: ArrayAdapter<String>) {
-        binding?.tvSpinner?.setAdapter(adapterSpinnerJogos)
+        binding.tvSpinner.setAdapter(adapterSpinnerJogos)
 
         setJogosSpinnerClickListener()
 
@@ -173,11 +270,8 @@ class JogosFragment: Fragment(){
 
 
 
-    //todo fazer outro spinner que vai aparecer quando o usuario escolher a rodada aí ele vai poder escolher os jogos por grupo ou ver os jogos de todos os grupos
 
     private fun setJogosSpinnerClickListener() {
-        Log.d("testecliquespinner", "entrei no metodo do click listeners mas ainda n escolhi nenhuma opcao")
-        Log.d("testecliquespinner", "${listaSpinnerJogos.size}")
 
         binding.tvSpinner.setOnItemClickListener { _, _, pos, _ ->
             Log.d("testecliquespinner", "cliquei em algum item, o spinner esta funcionando")
@@ -194,11 +288,11 @@ class JogosFragment: Fragment(){
                 createSpinnerGruposList()
                 showSpinnerGrupos()
                 clearRecycleView()
-                if(binding!!.tvSpinnerGrupos.text.toString() == "" || binding!!.tvSpinnerGrupos.text.toString() == "Todos os Grupos"){
+                if(binding.tvSpinnerGrupos.text.toString() == "" || binding.tvSpinnerGrupos.text.toString() == "Todos os Grupos"){
                     findPartidasDaPrimeiraRodada("Todos os Grupos")
 
                 }else{
-                    findPartidasDaPrimeiraRodada(binding!!.tvSpinnerGrupos.text.toString())
+                    findPartidasDaPrimeiraRodada(binding.tvSpinnerGrupos.text.toString())
                 }
                 mostrarPartidasDoDia = false
                 mostrarTodasPartidas = false
@@ -206,20 +300,17 @@ class JogosFragment: Fragment(){
                 mostrarPartidasSegundaRodada = false
                 mostrarPartidasTerceiraRodada = false
             }
-            //fazer a lista do segundo spinner
-            //fazer o adapter do segundo spinner
-            //eu n sei se vou precisar de um metodo pra fazer o hide do segundo spinner
 
 
             if (pos == 2){
                 createSpinnerGruposList()
                 showSpinnerGrupos()
                 clearRecycleView()
-                if(binding!!.tvSpinnerGrupos.text.toString() == "" || binding!!.tvSpinnerGrupos.text.toString() == "Todos os Grupos"){
+                if(binding.tvSpinnerGrupos.text.toString() == "" || binding.tvSpinnerGrupos.text.toString() == "Todos os Grupos"){
                     findPartidasDaSegundaRodada("Todos os Grupos")
 
                 }else{
-                    findPartidasDaSegundaRodada(binding!!.tvSpinnerGrupos.text.toString())
+                    findPartidasDaSegundaRodada(binding.tvSpinnerGrupos.text.toString())
                 }
 
                 mostrarPartidasDoDia = false
@@ -232,11 +323,11 @@ class JogosFragment: Fragment(){
                 createSpinnerGruposList()
                 showSpinnerGrupos()
                 clearRecycleView()
-                if(binding!!.tvSpinnerGrupos.text.toString() == "" || binding!!.tvSpinnerGrupos.text.toString() == "Todos os Grupos"){
+                if(binding.tvSpinnerGrupos.text.toString() == "" || binding.tvSpinnerGrupos.text.toString() == "Todos os Grupos"){
                     findPartidasDaTerceiraRodada("Todos os Grupos")
 
                 }else{
-                    findPartidasDaTerceiraRodada(binding!!.tvSpinnerGrupos.text.toString())
+                    findPartidasDaTerceiraRodada(binding.tvSpinnerGrupos.text.toString())
                 }
 
                 /*
@@ -258,15 +349,15 @@ class JogosFragment: Fragment(){
 
 
     private fun clearRecycleView() {
-        binding?.rvMatches?.adapter = PartidasAdapter(emptyList())
+        binding.rvMatches.adapter = PartidasAdapter(emptyList())
     }
 
     private fun setSpinnerGruposClickListener() {
-        binding?.tvSpinnerGrupos?.setOnItemClickListener { adapterView, view, pos, id ->
+        binding.tvSpinnerGrupos.setOnItemClickListener { _, _, _, _ ->
             dealWithSpinnerAfterReturningFromAnotherFragment()
             if (mostrarPartidasPrimeiraRodada){
                 clearRecycleView()
-                when(binding?.tvSpinnerGrupos?.text.toString()){
+                when(binding.tvSpinnerGrupos.text.toString()){
                     "A" -> {findPartidasDaPrimeiraRodada("A")}
                     "B" -> {findPartidasDaPrimeiraRodada("B")}
                     "C" -> {findPartidasDaPrimeiraRodada("C")}
@@ -284,7 +375,7 @@ class JogosFragment: Fragment(){
             }
             if (mostrarPartidasSegundaRodada){
                 clearRecycleView()
-                when(binding?.tvSpinnerGrupos?.text.toString()){
+                when(binding.tvSpinnerGrupos.text.toString()){
                     "A" -> {findPartidasDaSegundaRodada("A")}
                     "B" -> {findPartidasDaSegundaRodada("B")}
                     "C" -> {findPartidasDaSegundaRodada("C")}
@@ -299,7 +390,7 @@ class JogosFragment: Fragment(){
             }
             if (mostrarPartidasTerceiraRodada){
                 clearRecycleView()
-                when(binding?.tvSpinnerGrupos?.text.toString()){
+                when(binding.tvSpinnerGrupos.text.toString()){
                     "A" -> {findPartidasDaTerceiraRodada("A")}
                     "B" -> {findPartidasDaTerceiraRodada("B")}
                     "C" -> {findPartidasDaTerceiraRodada("C")}
@@ -326,74 +417,46 @@ class JogosFragment: Fragment(){
     }
 
 
-    private fun setupHttpClient() {
-        val logging = HttpLoggingInterceptor()
-        logging.setLevel(HttpLoggingInterceptor.Level.BASIC)
 
-        val client = OkHttpClient.Builder()
-            .addInterceptor(logging)
-            .build()
-
-
-        val retrofit = Retrofit.Builder().baseUrl(MatchesApi.BASE_URL)
-            .client(client)
-            .addConverterFactory(GsonConverterFactory.create()).build()
-        matchesApi = retrofit.create(MatchesApi::class.java)
-    }
 
     private fun setupMatchesRefresh() {
         binding.srlMatches.setOnRefreshListener {
-            Log.d("entendendo2", "to no setupMatchesRefresh")
             dealWithDataUpdateOnRefresh()
 
         }
     }
 
     private fun dealWithDataUpdateOnRefresh() {
-        Log.d("entendendo3", "mostrarTodasPartidas: ${mostrarTodasPartidas}")
-        Log.d("entendendo3", "mostrarPartidasDoDia: ${mostrarPartidasDoDia}")
-        Log.d("entendendo3", "mostrarPartidasPrimeiraRodada: ${mostrarPartidasPrimeiraRodada}")
-        Log.d("entendendo3", "mostrarPartidasSegundaRodada: ${mostrarPartidasSegundaRodada}")
-        Log.d("entendendo3", "mostrarPartidasTerceiraRodada: ${mostrarPartidasTerceiraRodada}")
 
 
         dealWithSpinnerAfterReturningFromAnotherFragment()
         if(mostrarTodasPartidas){
             findMatchesFromApi()
-            Log.d("entendendo3", "to no refresh mostrando todas as partidas")
         }
         if (mostrarPartidasDoDia){
             findTodayMatchesFromApi()
-            Log.d("entendendo3", "to no refresh mostrando todas as partidas do dia")
         }
         if (mostrarPartidasPrimeiraRodada){
-            Log.d("entendendo3", "to no refresh mostrando todas as partidas da primeira rodada")
             if(binding.tvSpinnerGrupos.text.toString() == ""){
                 findPartidasDaPrimeiraRodada("Todos os Grupos")
-                Log.d("entendendo3", "to no refresh mostrando todas as partidas da primeira rodada")
             }else{
                 findPartidasDaPrimeiraRodada(binding.tvSpinnerGrupos.text.toString())
-                Log.d("entendendo3", "to no refresh mostrando todas as partidas da primeira rodada de algum grupo")
             }
 
         }
         if (mostrarPartidasSegundaRodada){
-            Log.d("entendendo3", "to no refresh mostrando todas as partidas da segunda rodada")
             if(binding.tvSpinnerGrupos.text.toString() == ""){
                 findPartidasDaSegundaRodada("Todos os Grupos")
             }else{
                 findPartidasDaSegundaRodada(binding.tvSpinnerGrupos.text.toString())
-                Log.d("entendendo3", "to no refresh mostrando todas as partidas da segunda rodada de algum grupo")
 
             }
         }
         if (mostrarPartidasTerceiraRodada){
-            Log.d("entendendo3", "to no refresh mostrando todas as partidas da terceira rodada")
             if(binding.tvSpinnerGrupos.text.toString() == ""){
                 findPartidasDaTerceiraRodada("Todos os Grupos")
             }else{
                 findPartidasDaTerceiraRodada(binding.tvSpinnerGrupos.text.toString())
-                Log.d("entendendo3", "to no refresh mostrando todas as partidas da terceira rodada de algum grupo")
 
             }
         }
@@ -412,62 +475,10 @@ class JogosFragment: Fragment(){
 
 
 
-    fun findTodayMatchesFromApi(){
+    private fun findTodayMatchesFromApi(){
         turnOffNoMatchesTextView()
         binding.srlMatches.isRefreshing = true
-        matchesApi!!.getMatches().enqueue(object: Callback<List<Partida>> {
-            override fun onResponse(call: Call<List<Partida>>, response: Response<List<Partida>>) {
-                Log.d("onresponse", "to no onresponse" + response.code())
-                if (response.isSuccessful()) {
-                    val listaPartidas: MutableList<Partida> = mutableListOf()
-                    response.body()?.forEach { partida->
-                        val diaAtual = getCurrentDateToGetTodayMatches()
-                        if (partida.estadio.data_jogo == diaAtual){
-                            listaPartidas.add(partida)
-
-
-                        }
-
-                    }
-
-
-
-                    if(listaPartidas.isNotEmpty()){
-                        Log.d("testejogoshj", "lista de jogos de hoje nao esta vazia")
-                        adapter = PartidasAdapter(listaPartidas)
-                        binding.rvMatches.layoutManager = LinearLayoutManager(requireContext())
-                        binding.rvMatches.adapter = adapter
-                        if(lastPosition != null){
-                            binding.rvMatches.scrollToPosition(lastPosition!!)
-                        }
-
-                    }else{
-                        //lista é vazia e mensagem tem que aparecer
-                        turnOnNoMatchesTextView()
-                        adapter = PartidasAdapter(listaPartidas)
-                        //binding.rvMatches.layoutManager = LinearLayoutManager(requireContext())
-                        binding.rvMatches.adapter = adapter
-                        if(lastPosition != null){
-                            binding.rvMatches.scrollToPosition(lastPosition!!)
-
-                        }
-                        Log.d("testejogoshj", "lista de jogos de hoje esta vazia")
-                    }
-
-                } else {
-                    showErrorMessage()
-                }
-                binding.srlMatches.isRefreshing = false
-            }
-
-            override fun onFailure(call: Call<List<Partida>>, t: Throwable) {
-                Log.d("onfailure", "deu erro" + t.message.toString())
-                Toast.makeText(requireActivity(), "ocorreu um erro ao carregar os dados, verifique sua conexão com a internet e tente novamente!", Toast.LENGTH_LONG).show()
-                binding!!.srlMatches.isRefreshing = false
-
-            }
-
-        })
+        viewModel.findTodayMatchesFromApi()
 
     }
 
@@ -481,151 +492,34 @@ class JogosFragment: Fragment(){
 
 
 
-    private fun getCurrentDateToGetTodayMatches(): String {
-        val formatarData = SimpleDateFormat("dd/MM/yyyy")
-        val data = Date()
-        val dataFormatada = formatarData.format(data)
 
-        return dataFormatada
 
-    }
-
-    //vamos ver se ao ir para o fragment de detalhes ele ta passando
-    //a last position para o viewModel
 
     override fun onStop() {
         super.onStop()
-        Log.d("ciclofragment", "to no on stop do fragment jogos")
         if(lastPosition != null){
-            Log.d("testeposition", "last position nao é nulo e to no onStop")
-            Log.d("testeposition", "Esse é o lastPosition no onStop: $lastPosition")
-
 
 
             viewModel.setPosition(lastPosition!!)
         }else{
             Log.d("ciclofragment", "last position é null, por isso que ele n enviou as informacoes para o viewModel")
         }
-        Log.d("ciclofragment", "testando o lastposition aqui no onStop ${lastPosition}")
 
 
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.d("ciclofragment", "to no on destroy do fragment jogos")
-        //save position in shared preferences after destroy
 
-
-
-    }
 
     private fun findPartidasDaPrimeiraRodada(grupo: String) {
         turnOffNoMatchesTextView()
-        binding!!.srlMatches.isRefreshing = true
-        matchesApi!!.getMatches().enqueue(object: Callback<List<Partida>> {
-            override fun onResponse(call: Call<List<Partida>>, response: Response<List<Partida>>) {
-                Log.d("onresponse", "to no onresponse" + response.code())
-                if (response.isSuccessful()) {
-                    val listaPartidas: MutableList<Partida> = mutableListOf()
-                    response.body()?.forEach { partida->
-
-                        if (partida.estadio.rodada == 1){
-                            if (grupo == "Todos os Grupos"){
-                                listaPartidas.add(partida)
-                            }else{
-                                when(partida.estadio.grupo){
-                                    "A" -> {if (grupo == "A"){listaPartidas.add(partida)}}
-                                    "B" -> {if (grupo == "B"){listaPartidas.add(partida)}}
-                                    "C" -> {if (grupo == "C"){listaPartidas.add(partida)}}
-                                    "D" -> {if (grupo == "D"){listaPartidas.add(partida)}}
-                                    "E" -> {if (grupo == "E"){listaPartidas.add(partida)}}
-                                    "F" -> {if (grupo == "F"){listaPartidas.add(partida)}}
-                                    "G" -> {if (grupo == "G"){listaPartidas.add(partida)}}
-                                    "H" -> {if (grupo == "H"){listaPartidas.add(partida)}}
-
-                                }
-                            }
-
-                        }
-
-                    }
-
-
-
-                    adapter = PartidasAdapter(listaPartidas)
-                    binding!!.rvMatches.layoutManager = linearLayoutManager
-                    binding!!.rvMatches.adapter = adapter
-                    if(lastPosition != null){
-                        binding.rvMatches.scrollToPosition(lastPosition!!)
-                    }
-                } else {
-                    showErrorMessage()
-                }
-                binding!!.srlMatches.isRefreshing = false
-            }
-
-            override fun onFailure(call: Call<List<Partida>>, t: Throwable) {
-                Log.d("onfailure", "deu erro" + t.message.toString())
-                Toast.makeText(requireActivity(), "ocorreu um erro ao carregar os dados, verifique sua conexão com a internet e tente novamente!", Toast.LENGTH_LONG).show()
-                binding!!.srlMatches.isRefreshing = false
-
-            }
-
-        })
+        binding.srlMatches.isRefreshing = true
+        viewModel.findPartidasDaPrimeiraRodada(grupo)
     }
 
     private fun findPartidasDaSegundaRodada(grupo: String) {
         turnOffNoMatchesTextView()
-        binding!!.srlMatches.isRefreshing = true
-        matchesApi!!.getMatches().enqueue(object: Callback<List<Partida>> {
-            override fun onResponse(call: Call<List<Partida>>, response: Response<List<Partida>>) {
-                Log.d("onresponse", "to no onresponse" + response.code())
-                if (response.isSuccessful()) {
-                    val listaPartidas: MutableList<Partida> = mutableListOf()
-                    response.body()?.forEach { partida->
-                        if (partida.estadio.rodada == 2){
-                            if (grupo == "Todos os Grupos"){
-                                listaPartidas.add(partida)
-                            }else{
-                                when(partida.estadio.grupo){
-                                    "A" -> {if (grupo == "A"){listaPartidas.add(partida)}}
-                                    "B" -> {if (grupo == "B"){listaPartidas.add(partida)}}
-                                    "C" -> {if (grupo == "C"){listaPartidas.add(partida)}}
-                                    "D" -> {if (grupo == "D"){listaPartidas.add(partida)}}
-                                    "E" -> {if (grupo == "E"){listaPartidas.add(partida)}}
-                                    "F" -> {if (grupo == "F"){listaPartidas.add(partida)}}
-                                    "G" -> {if (grupo == "G"){listaPartidas.add(partida)}}
-                                    "H" -> {if (grupo == "H"){listaPartidas.add(partida)}}
-
-                                }
-                            }
-                        }
-
-                    }
-
-
-
-                    adapter = PartidasAdapter(listaPartidas)
-                    binding!!.rvMatches.layoutManager = linearLayoutManager
-                    binding!!.rvMatches.adapter = adapter
-                    if(lastPosition != null){
-                        binding.rvMatches.scrollToPosition(lastPosition!!)
-                    }
-                } else {
-                    showErrorMessage()
-                }
-                binding!!.srlMatches.isRefreshing = false
-            }
-
-            override fun onFailure(call: Call<List<Partida>>, t: Throwable) {
-                Log.d("onfailure", "deu erro" + t.message.toString())
-                Toast.makeText(requireActivity(), "ocorreu um erro ao carregar os dados, verifique sua conexão com a internet e tente novamente!", Toast.LENGTH_LONG).show()
-                binding!!.srlMatches.isRefreshing = false
-
-            }
-
-        })
+        binding.srlMatches.isRefreshing = true
+        viewModel.findPartidasDaSegundaRodada(grupo)
     }
 
     override fun onResume() {
@@ -638,15 +532,11 @@ class JogosFragment: Fragment(){
         ifLandscapeModeHideToolBar()
         createSpinnerList()
         createSpinnerGruposList()
-        binding!!.tvSpinner.setSelection(0)
-        Log.d("ciclodevida", "to no onresume")
+        binding.tvSpinner.setSelection(0)
         dealWithSpinnerAfterReturningFromAnotherFragment()
 
 
-        //retrieve last position
-        val getPrefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
         lastPosition = viewModel.getCurrentPosition()
-        Log.d("testeposition", "Esse é o lastPosition no onResume: $lastPosition")
 
 
     }
@@ -773,89 +663,21 @@ class JogosFragment: Fragment(){
 
     private fun findPartidasDaTerceiraRodada(grupo: String) {
         turnOffNoMatchesTextView()
-        binding!!.srlMatches.isRefreshing = true
-        matchesApi!!.getMatches().enqueue(object: Callback<List<Partida>> {
-            override fun onResponse(call: Call<List<Partida>>, response: Response<List<Partida>>) {
-                Log.d("onresponse", "to no onresponse" + response.code())
-                if (response.isSuccessful()) {
-                    val listaPartidas: MutableList<Partida> = mutableListOf()
-                    response.body()?.forEach { partida->
-                        if (partida.estadio.rodada == 3){
-                            if (grupo == "Todos os Grupos"){
-                                listaPartidas.add(partida)
-                            }else{
-                                when(partida.estadio.grupo){
-                                    "A" -> {if (grupo == "A"){listaPartidas.add(partida)}}
-                                    "B" -> {if (grupo == "B"){listaPartidas.add(partida)}}
-                                    "C" -> {if (grupo == "C"){listaPartidas.add(partida)}}
-                                    "D" -> {if (grupo == "D"){listaPartidas.add(partida)}}
-                                    "E" -> {if (grupo == "E"){listaPartidas.add(partida)}}
-                                    "F" -> {if (grupo == "F"){listaPartidas.add(partida)}}
-                                    "G" -> {if (grupo == "G"){listaPartidas.add(partida)}}
-                                    "H" -> {if (grupo == "H"){listaPartidas.add(partida)}}
-
-                                }
-                            }
-                        }
-
-                    }
-
-
-
-                    adapter = PartidasAdapter(listaPartidas)
-                    binding!!.rvMatches.layoutManager = linearLayoutManager
-                    binding!!.rvMatches.adapter = adapter
-                    if(lastPosition != null){
-                        binding.rvMatches.scrollToPosition(lastPosition!!)
-                    }
-                } else {
-                    showErrorMessage()
-                }
-                binding!!.srlMatches.isRefreshing = false
-            }
-
-            override fun onFailure(call: Call<List<Partida>>, t: Throwable) {
-                Log.d("onfailure", "deu erro" + t.message.toString())
-                Toast.makeText(requireActivity(), "ocorreu um erro ao carregar os dados, verifique sua conexão com a internet e tente novamente!", Toast.LENGTH_LONG).show()
-                binding!!.srlMatches.isRefreshing = false
-
-            }
-
-        })
+        binding.srlMatches.isRefreshing = true
+        viewModel.findPartidasDaTerceiraRodada(grupo)
     }
 
 
 
     private fun findMatchesFromApi() {
-        binding!!.srlMatches.isRefreshing = true
-        matchesApi!!.getMatches().enqueue(object: Callback<List<Partida>> {
-            override fun onResponse(call: Call<List<Partida>>, response: Response<List<Partida>>) {
-                Log.d("onresponse", "to no onresponse" + response.code())
-                if (response.isSuccessful()) {
-                    val partidas: List<Partida> = response.body()!!
-
-                    adapter = PartidasAdapter(partidas)
-                    binding!!.rvMatches.layoutManager = linearLayoutManager
-                    binding!!.rvMatches.adapter = adapter
-                } else {
-                    showErrorMessage()
-                }
-                binding!!.srlMatches.isRefreshing = false
-            }
-
-            override fun onFailure(call: Call<List<Partida>>, t: Throwable) {
-                Log.d("onfailure", "deu erro" + t.message.toString())
-                Toast.makeText(requireActivity(), "ocorreu um erro ao carregar os dados, verifique sua conexão com a internet e tente novamente!", Toast.LENGTH_LONG).show()
-                binding!!.srlMatches.isRefreshing = false
-
-            }
-
-        })
-
+        binding.srlMatches.isRefreshing = true
+        viewModel.findMatchesFromApi()
     }
 
-    private fun showErrorMessage() {
-        Toast.makeText(requireActivity(), "ocorreu um erro ao carregar os dados, verifique sua conexão com a internet e tente novamente!", Toast.LENGTH_LONG).show()
+    private fun showErrorMessage(s: String) {
+        Toast.makeText(requireActivity(), s, Toast.LENGTH_LONG).show()
+        binding.srlMatches.isRefreshing = false
+
     }
 
 }
