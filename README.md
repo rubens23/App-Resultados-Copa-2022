@@ -23,7 +23,8 @@
 <p float="left" align="center">
 <img alt="screenshot" width="30%" src="https://raw.githubusercontent.com/rubens23/App-Resultados-Copa-2022/main/app/src/main/appscreenshots/Screenshot_20230605_141121.png?token=GHSAT0AAAAAACBPNROBOPVW5FOACMCGZSVYZEA6B3A"/>
 <img alt="screenshot" width="30%" src="https://raw.githubusercontent.com/rubens23/App-Resultados-Copa-2022/main/app/src/main/appscreenshots/Screenshot_20230605_141215.png?token=GHSAT0AAAAAACBPNROAJ4ONXUCW7DHNRJYAZEA6CXA"/>
-<img alt="screenshot" width="30%" src="screenshots/screenshot-3.png"/>
+<img alt="screenshot" width="30%" src="https://raw.githubusercontent.com/rubens23/App-Resultados-Copa-2022/main/app/src/main/appscreenshots/Screenshot_20230605_141228.png?token=GHSAT0AAAAAACBPNROA2T57KRL45ZXJNL4YZEA6DZQ"/>
+<img alt="screenshot" width="30%" src="https://raw.githubusercontent.com/rubens23/App-Resultados-Copa-2022/main/app/src/main/appscreenshots/Screenshot_20230605_141302.png?token=GHSAT0AAAAAACBPNROBPYW52DPQ6QYHMM3SZEA6EQQ"/>
 </p>
 
 ## Download
