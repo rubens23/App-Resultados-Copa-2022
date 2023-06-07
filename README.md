@@ -21,7 +21,7 @@
 </br>
 
 <p float="left" align="center">
-<img alt="screenshot" width="30%" src="screenshots/screenshot-1.png"/>
+<img alt="screenshot" width="30%" src="appscreenshots/Screenshot_20230605_141121.png"/>
 <img alt="screenshot" width="30%" src="screenshots/screenshot-2.png"/>
 <img alt="screenshot" width="30%" src="screenshots/screenshot-3.png"/>
 </p>
