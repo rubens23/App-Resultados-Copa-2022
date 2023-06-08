@@ -72,21 +72,28 @@ Faça o download da <a href="apk/app-debug.apk?raw=true">APK diretamente</a>. Vo
 **App Resultados Copa 2022** utiliza a arquitetura [MVVM]
 (https://developer.android.com/topic/architecture).
 </br></br>
-<img width="60%" src="screenshots/arquitetura.png">
+<img width="60%" src="https://github.com/rubens23/App-Resultados-Copa-2022/raw/main/app/src/main/appscreenshots/Screenshot_arquitetura.PNG">
 <br>
 
 ## API de terceiros
 
-App Clima usa a [Weather API](https://openweathermap.org/api).<br>
- A Weather API disponibiliza o clima atual de vários lugares do mundo em tempo real. <br>
- O App Clima também utiliza a API [Rest Countries](https://restcountries.com/). A Rest Countries Api disponibiliza dados (nome, capital, etc) da maioria dos países do mundo. 
+App Resultados Copa 2022 usa duas apis criadas por mim utilizando github actions. São duas apis: uma para os dados dos jogos e outra para os dados das tabelas. 
 
 ## Features
 
-### Ver clima local ou global
-<img src="screenshots/feature-1.gif" width="25%"/>
+### Ver placar dos jogos e filtrar por grupo, rodada, ou dia atual.
+<img alt="screenshot" width="30%" src="https://github.com/rubens23/App-Resultados-Copa-2022/raw/main/app/src/main/appscreenshots/Screenshot_20230605_141215.png"/>
 
-Visualização do clima local da cidade onde o usuário está, pegando essa informação de forma dinâmica da web. E visualização de uma recycler view de países com suas respectivas bandeiras que o usuário pode escolher e ver o clima atual na capital daquele país.
+
+### Ver tabelas dos grupos e filtrar por grupo.
+<img alt="screenshot" width="30%" src="https://github.com/rubens23/App-Resultados-Copa-2022/raw/main/app/src/main/appscreenshots/Screenshot_20230605_141302.png"/>
+
+### Suporte para o modo noturno e paisagem.
+<img alt="screenshot" width="30%" src="https://github.com/rubens23/App-Resultados-Copa-2022/raw/main/app/src/main/appscreenshots/Screenshot_20230605_141302.png"/>
+<img alt="screenshot" width="30%" src="https://github.com/rubens23/App-Resultados-Copa-2022/raw/main/app/src/main/appscreenshots/Screenshot_20230605_141302.png"/>
+
+
+
 
 
 # Licença
