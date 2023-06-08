@@ -29,7 +29,9 @@ import androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition
 import androidx.test.espresso.matcher.RootMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
+import com.example.jogoscopadomundo2022.launchFragmentInHiltContainer
 import com.example.jogoscopadomundo2022.ui.uijogos.adapters.PartidasAdapter
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.hamcrest.Matcher
 
 
@@ -40,20 +42,20 @@ class JogosFragmentTest{
     lateinit var navController: TestNavHostController
 
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Before
     fun setup(){
         navController = TestNavHostController(
             ApplicationProvider.getApplicationContext()
         )
+        launchFragmentInHiltContainer<JogosFragment>(null, R.style.Theme_JogosCopaDoMundo2022){
 
-        val jogosFragment = launchFragmentInContainer<JogosFragment>(null, R.style.Theme_JogosCopaDoMundo2022)
-
-        jogosFragment.onFragment{
-                fragment->
             navController.setGraph(R.navigation.main_navigation)
 
-            Navigation.setViewNavController(fragment.requireView(), navController)
+            Navigation.setViewNavController(this.requireView(), navController)
         }
+
+
 
     }
 
