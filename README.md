@@ -89,8 +89,8 @@ App Resultados Copa 2022 usa duas apis criadas por mim utilizando github actions
 <img alt="screenshot" width="30%" src="https://github.com/rubens23/App-Resultados-Copa-2022/raw/main/app/src/main/appscreenshots/Screenshot_20230605_141302.png"/>
 
 ### Suporte para o modo noturno e paisagem.
-<img alt="screenshot" width="30%" src="https://github.com/rubens23/App-Resultados-Copa-2022/raw/main/app/src/main/appscreenshots/Screenshot_20230605_141302.png"/>
-<img alt="screenshot" width="30%" src="https://github.com/rubens23/App-Resultados-Copa-2022/raw/main/app/src/main/appscreenshots/Screenshot_20230605_141302.png"/>
+<img alt="screenshot" width="30%" src="https://github.com/rubens23/App-Resultados-Copa-2022/raw/main/app/src/main/appscreenshots/Screenshot_20230608_131430.png"/>
+<img alt="screenshot" width="30%" src="https://github.com/rubens23/App-Resultados-Copa-2022/raw/main/app/src/main/appscreenshots/Screenshot_20230608_131340.png"/>
 
 
 
