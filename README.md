@@ -14,7 +14,7 @@
 
 ⭐ Esse é um projeto para demonstrar meu conhecimento técnico no desenvolvimento Android nativo com Kotlin. Mais informações técnicas abaixo.
 
-⛅ Aplicativo que mostra os resultados dos jogos ocorridos na Copa do Mundo de 2022 no Qatar.
+:soccer: Aplicativo que mostra os resultados dos jogos ocorridos na Copa do Mundo de 2022 no Qatar.
 
 </p>
 
@@ -55,14 +55,17 @@ Faça o download da <a href="apk/app-debug.apk?raw=true">APK diretamente</a>. Vo
   - JUnit4: biblioteca para conseguir rodar testes automatizados no android studio.
 
 - Arquitetura 
-  - MVVM (View - ViewModel - Model): Utilizada para colocar um intermediário entre a view e a lógica de negócio. No meu app a viewModel presente na arquitetura mvvm me ajuda a separar a lógica de obtençao de dados da camada de view(fragments e activity).
+  - MVVM (View - ViewModel - Model): Utilizada para colocar um intermediário entre a view e a lógica de negócio. No meu app a viewModel presente na arquitetura mvvm me ajuda a separar a lógica de obtenção de dados da camada de view(fragments e activity).
   - Eu também utilizei uma interface para servir de intermediario entre a api e a classe que deseja obter os dados.
+(Fragments -> ViewModel -> Repository -> api)
   
 - Bibliotecas 
   - [Retrofit](https://square.github.io/retrofit/): Biblioteca para fazer requisições HTTP para as APIs.
   - [Gson Converter](https://github.com/square/retrofit/tree/master/retrofit-converters/gson): Biblioteca para converter objetos JSON em objetos JAVA compreendíveis no Android Studio.
   - [okHttp Logging Interceptor](https://github.com/square/okhttp/tree/master/okhttp-logging-interceptor): Biblioteca que serve para obter Logs mais detalhados das requisições HTTPs.
   - [Glide](https://github.com/bumptech/glide): Biblioteca para carregar imagens através da url e armazená-las em cache.
+  - [Dagger Hilt](https://dagger.dev/hilt/gradle-setup): Biblioteca usada para injetar a instância do repository na viewModel.
+  - [Hamcrest](https://hamcrest.org/JavaHamcrest/index): Biblioteca usada para prover algumas asserções para facilitar meus testes de ui.
 
 
 ## Arquitetura
